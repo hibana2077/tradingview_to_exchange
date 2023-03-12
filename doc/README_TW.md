@@ -6,9 +6,9 @@
 ![GitHub stars](https://img.shields.io/github/stars/hibana2077/GPT_news_generator?style=social)
 ![GitHub forks](https://img.shields.io/github/forks/hibana2077/GPT_news_generator?style=social)
 
-English | [中文](./doc/README_TW.md)
+中文 | [English](../README.md)
 
-## Introduction
+## 介紹
 
 ![python](https://img.shields.io/badge/python-3.11-blue?style=plastic-square&logo=python)
 ![streamlit](https://img.shields.io/badge/streamlit-1.20.0-FF4B4B?style=plastic-square&logo=streamlit)
@@ -16,13 +16,13 @@ English | [中文](./doc/README_TW.md)
 ![mongodb](https://img.shields.io/badge/mongodb-4.4.6-47A248?style=plastic-square&logo=mongodb)
 ![openai](https://img.shields.io/badge/openai-0.27.0-412991?style=plastic-square&logo=openai)
 
-This is a Crypto trading bot that can automatically trade on the exchange based on the tradingview alert.
+這是一個可以根據tradingview的alert自動在交易所進行交易的加密貨幣交易機器人。<br/>
 
-User only need to deploy docker image on the server and set the tradingview alert to the bot.
+使用者只需要在伺服器上部署docker image，並將tradingview的alert設置給機器人即可。<br/>
 
-## Features
+## 功能
 
-- [x] Support Spot Trading and Futures Trading
-- [x] Support Binance, Okex
-- [x] Support multiple trading pairs
-- [x] Support multiple trading strategies
+- [x] 支援現貨交易和期貨交易
+- [x] 支援Binance, Okex
+- [x] 支援多個交易對
+- [x] 支援多個交易策略
