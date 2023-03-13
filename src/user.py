@@ -1,6 +1,7 @@
 import requests
 import streamlit as st
 import openai
+from datetime import datetime, timedelta, date
 
 
 
@@ -23,6 +24,7 @@ def login():
                 st.session_state.token = response.json()["token"]
                 st.session_state.user_id = response.json()["user_id"]
                 st.session_state.user_name = response.json()["user_name"]
+                st.session_state.expire_date = response.json()["expire_date"]
             elif response.json()["status"] == "Failure":
                 st.error(response.json()["message"])
         else:
@@ -37,6 +39,6 @@ pages = {
 
 if __name__ == "__main__":
     st.sidebar.title("Navigation")
-    selection = st.sidebar.selectbox("Go to", list(pages.keys())) if st.session_state.get("host_location") is not None else "Login"
+    selection = st.sidebar.selectbox("Go to", list(pages.keys())) if (st.session_state.get("host_location") is not None) and (date(*map(int, st.session_state.expire_date.split(" ")[0].split("-"))) >= date.today()) else "Login"
     page = pages[selection]
     page()
