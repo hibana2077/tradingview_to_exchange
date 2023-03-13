@@ -1,3 +1,11 @@
+'''
+Author: hibana2077 hibana2077@gmail.com
+Date: 2023-03-12 10:22:06
+LastEditors: hibana2077 hibana2077@gmail.com
+LastEditTime: 2023-03-13 12:50:44
+FilePath: \tradingview_to_exchange\src\user.py
+Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+'''
 import requests
 import streamlit as st
 import openai
@@ -39,6 +47,6 @@ pages = {
 
 if __name__ == "__main__":
     st.sidebar.title("Navigation")
-    selection = st.sidebar.selectbox("Go to", list(pages.keys())) if (st.session_state.get("host_location") is not None) and (date(*map(int, st.session_state.expire_date.split(" ")[0].split("-"))) >= date.today()) else "Login"
+    selection = st.sidebar.selectbox("Go to", list(pages.keys())) if (date(*map(int, st.session_state.expire_date.split(" ")[0].split("-"))) >= date.today()) else "Login"
     page = pages[selection]
     page()
