@@ -1,16 +1,56 @@
-'''
-Author: hibana2077 hibana2077@gmaill.com
-Date: 2023-03-15 13:26:23
-LastEditors: hibana2077 hibana2077@gmaill.com
-LastEditTime: 2023-03-15 16:48:13
-FilePath: /tradingview_to_exchange/src/user.py
-Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
-'''
 
 import requests
 import streamlit as st
 import openai
 from datetime import datetime, timedelta, date
+
+st.set_page_config(
+    page_title="TV2EX -- Quantitative Trading Platform",
+    page_icon="https://media.discordapp.net/attachments/868759966431973416/1085575299871277116/HEX_Inc..png",
+    layout="wide",
+    initial_sidebar_state="expanded",
+    menu_items={
+        'Get Help': 'https://www.extremelycoolapp.com/help',
+        'Report a bug': "https://www.extremelycoolapp.com/bug",
+        'About': "# This is a header. This is an *extremely* cool app!"
+    }
+)
+
+Greetings = {
+    "morning": "Good morning",
+    "afternoon": "Good afternoon",
+    "evening": "Good evening",
+    "night": "Good night",
+}
+
+emoji_dict = {
+    "morning": "🌅",
+    "afternoon": "🌇",
+    "evening": "🌆",
+    "night": "🌃",
+}
+
+def best_greeting():
+    hour = datetime.now().hour
+    if 6>hour>=0:
+        return Greetings["night"]
+    elif 12>hour>=6:
+        return Greetings["morning"]
+    elif 18>hour>=12:
+        return Greetings["afternoon"]
+    elif 24>hour>=18:
+        return Greetings["evening"]
+
+def best_emoji():
+    hour = datetime.now().hour
+    if 6>hour>=0:
+        return emoji_dict["night"]
+    elif 12>hour>=6:
+        return emoji_dict["morning"]
+    elif 18>hour>=12:
+        return emoji_dict["afternoon"]
+    elif 24>hour>=18:
+        return emoji_dict["evening"]
 
 #init session state
 if "is_login" not in st.session_state:
@@ -47,17 +87,63 @@ def is_login():
             return True
         else:
             set_login_satae("clear", {})
-            return False
     else:
         return False
 
 def Dashboard():
     if is_login():
-        welcom_str = f"""<p style="font-size:200%;">Welcome back <span style="color:#ECD53F">{st.session_state.user_name}</span>.</p>"""
+        greeting = best_greeting()
+        welcom_str = f"""<p style="font-size:320%;">{greeting} <span style="color:#ECD53F">{st.session_state.user_name}</span> ! {best_emoji()}</p>"""
         st.markdown(welcom_str,unsafe_allow_html=True)
+        col1, col2, col3 = st.columns(3)
+        col1.metric("Total Orders", "20", delta="+1.68%", help="Total orders in the past 24 hours") #connect to database
+        col2.metric("Unrealized PnL", "168 USDT", delta="+0.5%", help="Unrealized PnL in the past 24 hours") #connect to database
+        col3.metric("Realized PnL", "289 USDT", delta="+0.5%", help="Realized PnL in the past 24 hours") #connect to database
+        st.markdown("""## Orders""") #connect to database
+        tab1 , tab2, tab3 = st.tabs(["Open Orders", "Closed Orders", "All Orders"])
+        with tab1:
+            st.markdown("""### Open Orders""")
+            openorder_data = {
+                "symbol": ["BTCUSDT", "ETHUSDT", "BNBUSDT", "ADAUSDT", "DOGEUSDT", "DOTUSDT", "XRPUSDT", "LTCUSDT", "LINKUSDT", "SOLUSDT"],
+                "side": ["Buy", "Sell", "Buy", "Sell", "Buy", "Sell", "Buy", "Sell", "Buy", "Sell"],
+                "price": ["$50,000", "$2,000", "$400", "$2.50", "$0.30", "$40", "$1.50", "$200", "$40", "$50"],
+                "quantity": ["0.001", "0.01", "0.1", "10", "1000", "10", "100", "1", "10", "1"],
+                "Unrealized PnL": ["$14", "$2", "$4", "$0.25", "$0.03", "$4", "$0.15", "$20", "$4", "$5"],
+            }#connect to database
+            st.table(openorder_data)
+        with tab2:
+            st.markdown("""### Closed Orders""")
+            closedorder_data = {
+                "symbol": ["DODOUSDT", "UNIUSDT", "FILUSDT", "AAVEUSDT", "ICPUSDT", "SUSHIUSDT", "AVAXUSDT", "XLMUSDT", "BCHUSDT", "EOSUSDT"],
+                "side": ["Buy", "Sell", "Buy", "Sell", "Buy", "Sell", "Buy", "Sell", "Buy", "Sell"],
+                "price": ["$5.50", "$30", "$60", "$350", "$50", "$10", "$70", "$0.50", "$600", "$5"],
+                "quantity": ["0.1", "0.1", "0.01", "0.1", "0.1", "0.01", "0.1", "100", "0.01", "0.1"],
+                "Realized PnL": ["$1.4", "$0.2", "$0.4", "$0.25", "$0.03", "$0.4", "$0.15", "$2.0", "$0.4", "$0.5"],
+            }
+            st.table(closedorder_data)
+        with tab3:
+            st.markdown("""### All Orders""")
+            allorder_data = {
+                "symbol": ["BTCUSDT", "ETHUSDT", "BNBUSDT", "ADAUSDT", "DOGEUSDT", "DOTUSDT", "XRPUSDT", "LTCUSDT", "LINKUSDT", "SOLUSDT","DODOUSDT", "UNIUSDT", "FILUSDT", "AAVEUSDT", "ICPUSDT", "SUSHIUSDT", "AVAXUSDT", "XLMUSDT", "BCHUSDT", "EOSUSDT"],
+                "side": ["Buy", "Sell", "Buy", "Sell", "Buy", "Sell", "Buy", "Sell", "Buy", "Sell","Buy", "Sell", "Buy", "Sell", "Buy", "Sell", "Buy", "Sell", "Buy", "Sell"],
+                "price": ["$50,000", "$2,000", "$400", "$2.50", "$0.30", "$40", "$1.50", "$200", "$40", "$50","$5.50", "$30", "$60", "$350", "$50", "$10", "$70", "$0.50", "$600", "$5"],
+                "quantity": ["0.001", "0.01", "0.1", "10", "1000", "10", "100", "1", "10", "1","0.1", "0.1", "0.01", "0.1", "0.1", "0.01", "0.1", "100", "0.01", "0.1"],
+                "status":["Open","Open","Open","Open","Open","Open","Open","Open","Open","Open","Closed","Closed","Closed","Closed","Closed","Closed","Closed","Closed","Closed","Closed"],
+            }
+            st.table(allorder_data)
+        st.markdown("""## Analytics""") #connect to database
+
+def Trend():
+    st.markdown("""# Trend""")
 
 def Setting():
     st.markdown("""# Setting""")
+    st.markdown("""## User Setting""")
+    st.markdown("""## API Setting""")
+    st.markdown("""## Webhook Setting""")
+    st.markdown("""## Tradingview Setting""")
+    st.markdown("""## Exchange Setting""")
+    
 
 def welcome():
     st.markdown("""# Welcome to the Tradingview to Exchange App""")
@@ -67,6 +153,7 @@ def User_manual():
 
 def logout():
     set_login_satae("clear", {})
+
 
 def login():
     st.title("Login")
@@ -104,10 +191,12 @@ pages = {
     "Setting": Setting,
     "Logout": logout,
     "User Manual": User_manual,
+    "Trend": Trend,
 }
 
 login_user_page = {
     "Dashboard": Dashboard,
+    "Trend": Trend,
     "User Manual": User_manual,
     "Setting": Setting,
     "Logout": logout,
