@@ -3,6 +3,9 @@ import requests
 import streamlit as st
 import pandas as pd
 import openai
+from plotly import graph_objects as go
+from plotly import express as px
+from ccxt import binance,okex5
 from datetime import datetime, timedelta, date
 
 from pandas.api.types import (
@@ -182,6 +185,27 @@ def Dashboard():
         col2.metric("Unrealized PnL", "168 USDT", delta="+0.5%", help="Unrealized PnL in the past 24 hours") #connect to database
         col3.metric("Realized PnL", "289 USDT", delta="+0.5%", help="Realized PnL in the past 24 hours") #connect to database
         st.markdown("""## Analytics""") #connect to database
+        tab1 , tab2, tab3 = st.tabs(["Portfolio", "Trade History", "Trade Analysis"])
+        with tab1:
+            st.markdown("""### Portfolio""")
+            portfolio_data = {
+                "symbol": ["BTCUSDT", "ETHUSDT", "BNBUSDT", "ADAUSDT", "DOGEUSDT", "DOTUSDT", "XRPUSDT", "LTCUSDT", "LINKUSDT", "SOLUSDT", "UNIUSDT", "AVAXUSDT", "FILUSDT", "BCHUSDT", "THETAUSDT", "VETUSDT", "XLMUSDT", "TRXUSDT", "ETCUSDT", "ICPUSDT"],
+                "quantity": ["0.001", "0.01", "0.1", "10", "1000", "0.01", "1.", "1", "0.1", "0.01", "0.1", "1", "0.1", "0.01", "1", "10", "100", "1000", "10", "1"],
+                "price": ["$50000", "$2000", "$400", "$2.50", "$0.30", "$40", "$1.50", "$200", "$40", "$50", "$40", "$60", "$60", "$600", "$10", "$0.20", "$0.50", "$0.10", "$10", "$60"],
+                "value": ["$50", "$20", "$40", "$25", "$300", "$400", "$15", "$2000", "$400", "$500", "$400", "$600", "$600", "$6000", "$100", "$2", "$50", "$10", "$100", "$600"],
+            }
+            portfolio_df = pd.DataFrame(portfolio_data)
+            portfolio_df["price"] = portfolio_df["price"].apply(lambda x: x.replace("$",""))
+            portfolio_df["value"] = portfolio_df["value"].apply(lambda x: x.replace("$",""))
+            portfolio_df["quantity"] = portfolio_df["quantity"].astype(float)
+            portfolio_df["price"] = portfolio_df["price"].astype(float)
+            portfolio_df["value"] = portfolio_df["value"].astype(float)
+            portfolio_df["price"] = portfolio_df["price"].apply(lambda x: f"${x:,.4f}")
+            portfolio_df["value"] = portfolio_df["value"].apply(lambda x: f"${x:,.4f}")
+            #pie chart
+            fig = px.pie(portfolio_df, values='value', names='symbol', title='Portfolio Value')
+            # fig.update_traces(textposition='inside', textinfo='percent+label')
+            st.plotly_chart(fig)
         st.markdown("""## Orders""") #connect to database
         tab1 , tab2, tab3 = st.tabs(["Open Orders", "Closed Orders", "All Orders"])
         with tab1:
