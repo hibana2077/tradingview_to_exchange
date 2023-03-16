@@ -3,6 +3,7 @@ import requests
 import streamlit as st
 import pandas as pd
 import openai
+from random import randint
 from plotly import graph_objects as go
 from plotly import express as px
 from ccxt import binance,okex5
@@ -175,6 +176,17 @@ def is_login():
     else:
         return False
 
+def Analysis():
+    st.markdown("""## Analysis""") #connect to database
+    tab1, tab2 = st.tabs(["Trading Data", "Performance"])
+    with tab1:
+        col1,col2 = st.columns([1,2])
+        with col1:
+            st.markdown("""### Data Overview""") #connect to database
+        with col2:
+            st.markdown("""### ROI""")#connect to database
+            col_tiny_1 , col_tiny_2 = st.columns([1,1])
+
 def Dashboard():
     if is_login():
         greeting = best_greeting()
@@ -184,28 +196,14 @@ def Dashboard():
         col1.metric("Total Orders", "20", delta="+1.68%", help="Total orders in the past 24 hours") #connect to database
         col2.metric("Unrealized PnL", "168 USDT", delta="+0.5%", help="Unrealized PnL in the past 24 hours") #connect to database
         col3.metric("Realized PnL", "289 USDT", delta="+0.5%", help="Realized PnL in the past 24 hours") #connect to database
-        st.markdown("""## Analytics""") #connect to database
-        tab1 , tab2, tab3 = st.tabs(["Portfolio", "Trade History", "Trade Analysis"])
-        with tab1:
-            st.markdown("""### Portfolio""")
-            portfolio_data = {
-                "symbol": ["BTCUSDT", "ETHUSDT", "BNBUSDT", "ADAUSDT", "DOGEUSDT", "DOTUSDT", "XRPUSDT", "LTCUSDT", "LINKUSDT", "SOLUSDT", "UNIUSDT", "AVAXUSDT", "FILUSDT", "BCHUSDT", "THETAUSDT", "VETUSDT", "XLMUSDT", "TRXUSDT", "ETCUSDT", "ICPUSDT"],
-                "quantity": ["0.001", "0.01", "0.1", "10", "1000", "0.01", "1.", "1", "0.1", "0.01", "0.1", "1", "0.1", "0.01", "1", "10", "100", "1000", "10", "1"],
-                "price": ["$50000", "$2000", "$400", "$2.50", "$0.30", "$40", "$1.50", "$200", "$40", "$50", "$40", "$60", "$60", "$600", "$10", "$0.20", "$0.50", "$0.10", "$10", "$60"],
-                "value": ["$50", "$20", "$40", "$25", "$300", "$400", "$15", "$2000", "$400", "$500", "$400", "$600", "$600", "$6000", "$100", "$2", "$50", "$10", "$100", "$600"],
-            }
-            portfolio_df = pd.DataFrame(portfolio_data)
-            portfolio_df["price"] = portfolio_df["price"].apply(lambda x: x.replace("$",""))
-            portfolio_df["value"] = portfolio_df["value"].apply(lambda x: x.replace("$",""))
-            portfolio_df["quantity"] = portfolio_df["quantity"].astype(float)
-            portfolio_df["price"] = portfolio_df["price"].astype(float)
-            portfolio_df["value"] = portfolio_df["value"].astype(float)
-            portfolio_df["price"] = portfolio_df["price"].apply(lambda x: f"${x:,.4f}")
-            portfolio_df["value"] = portfolio_df["value"].apply(lambda x: f"${x:,.4f}")
-            #pie chart
-            fig = px.pie(portfolio_df, values='value', names='symbol', title='Portfolio Value')
-            # fig.update_traces(textposition='inside', textinfo='percent+label')
-            st.plotly_chart(fig)
+        daily_roi_data = {
+            "date": ["2023-01-"+str(date_it) for date_it in range(1, 31)],
+            "ROI": [randint(1, 100) for i in range(30)],
+        }
+        daily_roi_df = pd.DataFrame(daily_roi_data)
+        daily_roi_df["date"] = pd.to_datetime(daily_roi_df["date"])
+        fig_daily_roi = px.line(daily_roi_df, x="date", y="ROI", title="Daily ROI")
+        st.plotly_chart(fig_daily_roi, use_container_width=True)
         st.markdown("""## Orders""") #connect to database
         tab1 , tab2, tab3 = st.tabs(["Open Orders", "Closed Orders", "All Orders"])
         with tab1:
@@ -299,10 +297,12 @@ pages = {
     "Logout": logout,
     "User Manual": User_manual,
     "Trend": Trend,
+    "Analysis": Analysis,
 }
 
 login_user_page = {
     "Dashboard": Dashboard,
+    "Analysis": Analysis,
     "Trend": Trend,
     "User Manual": User_manual,
     "Setting": Setting,
