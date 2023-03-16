@@ -1,6 +1,7 @@
 
 import requests
 import streamlit as st
+import pandas as pd
 import openai
 from datetime import datetime, timedelta, date
 
@@ -99,6 +100,7 @@ def Dashboard():
         col1.metric("Total Orders", "20", delta="+1.68%", help="Total orders in the past 24 hours") #connect to database
         col2.metric("Unrealized PnL", "168 USDT", delta="+0.5%", help="Unrealized PnL in the past 24 hours") #connect to database
         col3.metric("Realized PnL", "289 USDT", delta="+0.5%", help="Realized PnL in the past 24 hours") #connect to database
+        st.markdown("""## Analytics""") #connect to database
         st.markdown("""## Orders""") #connect to database
         tab1 , tab2, tab3 = st.tabs(["Open Orders", "Closed Orders", "All Orders"])
         with tab1:
@@ -131,7 +133,7 @@ def Dashboard():
                 "status":["Open","Open","Open","Open","Open","Open","Open","Open","Open","Open","Closed","Closed","Closed","Closed","Closed","Closed","Closed","Closed","Closed","Closed"],
             }
             st.table(allorder_data)
-        st.markdown("""## Analytics""") #connect to database
+        
 
 def Trend():
     st.markdown("""# Trend""")
@@ -209,7 +211,17 @@ unlogin_user_page = {
 
 
 if __name__ == "__main__":
-    st.sidebar.title("Navigation")
-    selection = st.sidebar.selectbox("Go to", list(login_user_page.keys())) if is_login() else st.sidebar.selectbox("Go to", list(unlogin_user_page.keys()))
+    # st.sidebar.title("Navigation")
+    # col1,_ = st.columns([1,1])
+    # selection = st.sidebar.selectbox("Go to", list(login_user_page.keys())) if is_login() else st.sidebar.selectbox("Go to", list(unlogin_user_page.keys()))
+    # page = pages[selection]
+    # page()
+    with st.sidebar:
+        col1,_ = st.columns([1,1])
+        with col1:
+            st.image("https://media.discordapp.net/attachments/868759966431973416/1085575034933874748/HEX_Inc..png",width=200)
+        st.title("TV2EX")
+        selection = st.selectbox("Go to", list(login_user_page.keys())) if is_login() else st.selectbox("Go to", list(unlogin_user_page.keys()))
+        
     page = pages[selection]
     page()
