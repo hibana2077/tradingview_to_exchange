@@ -54,7 +54,7 @@ def generate_Token(user_name:str):
 
 
 class Order(BaseModel):
-    api_key: str # API key for the exchange
+    username: str # Username of the user who placed the order and to query the api_key and secret_key
     symbol: str # Symbol of the coin to buy
     side: str # Buy or sell   
     type: str # Market or limit
@@ -73,6 +73,17 @@ class front_Query(BaseModel):
 class User(BaseModel):
     user_name: str
     password: str
+
+class binance_api_setting(BaseModel):
+    user_name: str
+    api_key: str
+    secret_key: str
+
+class okex5_api_setting(BaseModel):
+    user_name: str
+    api_key: str
+    secret_key: str
+    passphrase: str
 
 app = FastAPI()
 

@@ -64,6 +64,22 @@ def best_emoji():
     elif 24>hour>=18:
         return emoji_dict["evening"]
 
+def best_risk_color(risk:int):
+    if risk < 25:
+        return "#67E82E"
+    elif risk < 50:
+        return "#FFE940"
+    else:
+        return "#FF5340"
+    
+def best_win_rate_color(win_rate:int):
+    if win_rate < 25:
+        return "#FF5340"
+    elif win_rate < 50:
+        return "#FFE940"
+    else:
+        return "#67E82E"
+
 def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     """
     Adds a UI on top of a dataframe to let viewers filter columns
@@ -138,9 +154,7 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
 
     return df
 
-#init session state
-if "is_login" not in st.session_state:
-    st.session_state.is_login = False
+
     
 def set_login_satae(state_in:str,data:dict):
     if state_in=="clear":
@@ -165,6 +179,15 @@ def set_login_satae(state_in:str,data:dict):
         raise ValueError("state must be 'clear' or 'set'")
     return st.experimental_rerun()
     
+#init session state
+if "is_login" not in st.session_state:
+    st.session_state.binance_api_key = ""
+    st.session_state.binance_secret_key = ""
+    st.session_state.okex_api_key = ""
+    st.session_state.okex_secret_key = ""
+    st.session_state.okex_passphrase = ""
+    set_login_satae("clear",{})
+    
 
 def is_login():
     if st.session_state.is_login:
@@ -183,9 +206,108 @@ def Analysis():
         col1,col2 = st.columns([1,2])
         with col1:
             st.markdown("""### Data Overview""") #connect to database
+            col_tiny_1 , col_tiny_2 = st.columns([1,1])
+            col_tiny_1.metric("30 Days ROI", "+99.19 %", delta="+45.5 %", help="30 Days ROI") #connect to database
+            col_tiny_2.metric("30 Days PnL", "1680 USDT", delta="+560", help="30 Days PnL") #connect to database
+            st.markdown("""---""")
+            account_assets = 1000 #connect to database
+            risk_score = 45 #connect to database
+            win_rate = 80 #connect to database
+            total_trades = 1258 #connect to database
+            profit_trades = 1000 #connect to database
+            loss_trades = 258 #connect to database
+            average_profit = 1.68 #connect to database
+            average_loss = -0.65 #connect to database
+            profit_loss_ratio = 2.6 #connect to database
+            average_trade_duration = 1.5 #connect to database
+            trading_frequency = 19 #connect to database
+            last_trade_date = "2023-03-16" #connect to database
+            st.markdown(f"""<p style="font-size:155%;"> Account Asset: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:green">{account_assets} </span>USDT</p>""",unsafe_allow_html=True)
+            st.markdown(f"""<p style="font-size:155%;"> Account Risk: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:{best_risk_color(risk=risk_score)}">{risk_score} </span>%</p>""",unsafe_allow_html=True)
+            st.markdown(f"""<p style="font-size:155%;"> Win Rate: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:{best_win_rate_color(win_rate=win_rate)}">{win_rate} </span>%</p>""",unsafe_allow_html=True)
+            st.markdown(f"""<p style="font-size:155%;"> Total Trades: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:green">{total_trades}</span></p>""",unsafe_allow_html=True)
+            st.markdown(f"""<p style="font-size:155%;"> Profit Trades: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:green">{profit_trades}</span></p>""",unsafe_allow_html=True)
+            st.markdown(f"""<p style="font-size:155%;"> Loss Trades: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:red">{loss_trades}</span></p>""",unsafe_allow_html=True)
+            st.markdown(f"""<p style="font-size:155%;"> Average Profit: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:green">{average_profit} </span>USDT</p>""",unsafe_allow_html=True)
+            st.markdown(f"""<p style="font-size:155%;"> Average Loss: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:red">{average_loss} </span>USDT</p>""",unsafe_allow_html=True)
+            st.markdown(f"""<p style="font-size:155%;"> Profit/Loss Ratio: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:green">{profit_loss_ratio}</span></p>""",unsafe_allow_html=True)
+            st.markdown(f"""<p style="font-size:155%;"> Average Trade Duration: &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:green">{average_trade_duration} </span>days</p>""",unsafe_allow_html=True)
+            st.markdown(f"""<p style="font-size:155%;"> Trading Frequency: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:green">{trading_frequency} </span>trades/day</p>""",unsafe_allow_html=True)
+            st.markdown(f"""<p style="font-size:155%;"> Last Trade Date: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:green">{last_trade_date}</span></p>""",unsafe_allow_html=True)
         with col2:
             st.markdown("""### ROI""")#connect to database
+            ROI_data = {
+                "date": [i for i in range(1, 34)],
+                "ROI": [i for i in range(1,100,3)]
+            }
+            ROI_df = pd.DataFrame(ROI_data)
+            fig = px.line(ROI_df, x="date", y="ROI")
+            fig.update_layout(
+                xaxis_title="Date",
+                yaxis_title="ROI",
+                font=dict(
+                    family="Courier New, monospace",
+                    size=18,
+                    color="RebeccaPurple"
+                )
+            )
+            st.plotly_chart(fig, use_container_width=True)
             col_tiny_1 , col_tiny_2 = st.columns([1,1])
+            with col_tiny_1:
+                st.markdown("""### Every week income""")#connect to database
+                weekly_income_data = {
+                    "date": [date(2021, 1, 1) + timedelta(days=i) for i in range(1, 180,7)],
+                    "income": [randint(1, 100) for i in range(26)]
+                }
+                weekly_income_df = pd.DataFrame(weekly_income_data)
+                fig = px.bar(weekly_income_df, x="date", y="income")
+                fig.update_layout(
+                    xaxis_title="Date",
+                    yaxis_title="Income",
+                    font=dict(
+                        family="Courier New, monospace",
+                        size=18,
+                        color="RebeccaPurple"
+                    )
+                )
+                st.plotly_chart(fig, use_container_width=True)
+            with col_tiny_2:
+                st.markdown("""### Risk """)#connect to database
+                risk_data = {
+                    "date": [date(2021, 1, 1) + timedelta(days=i) for i in range(1, 180,7)],
+                    "risk": [randint(1, 3) for i in range(26)]
+                }
+                risk_df = pd.DataFrame(risk_data)
+                fig = px.bar(risk_df, x="date", y="risk")
+                fig.update_layout(
+                    xaxis_title="Date",
+                    yaxis_title="Risk",
+                    font=dict(
+                        family="Courier New, monospace",
+                        size=18,
+                        color="RebeccaPurple"
+                    )
+                )
+                st.plotly_chart(fig, use_container_width=True)
+    st.markdown("""### Trade Symbol""")#connect to database
+    trade_symbol_data = {
+        "Symbol": ["LINK","BTC","ETH","ADA","DOGE","XRP","DOT","LTC","BCH","UNI","SOL","BNB"],
+        "Total Trades": [randint(2, 100) for i in range(12)],
+        "Profit": [randint(2, 100) for i in range(12)],
+    }
+    trade_symbol_df = pd.DataFrame(trade_symbol_data)
+    fig = px.pie(trade_symbol_df, values='Total Trades', names='Symbol', title='Total Trades', hover_data=['Profit'], labels={'Profit':'Profit'})
+    fig.update_traces(textposition='inside', textinfo='percent+label')
+    fig.update_layout(
+        xaxis_title="Symbol",
+        yaxis_title="Total Trades",
+        font=dict(
+            family="Helvetica, monospace",
+            size=18,
+            color="RebeccaPurple"
+        )
+    )
+    st.plotly_chart(fig, use_container_width=True)
 
 def Dashboard():
     if is_login():
@@ -244,11 +366,93 @@ def Trend():
 def Setting():
     st.markdown("""# Setting""")
     st.markdown("""## User Setting""")
+    user_setting_form = st.form(key="user_setting_form")
+    user_name = user_setting_form.text_input("User Name")
+    pass_word = user_setting_form.text_input("Password", type="password")
+
+
+    if user_setting_form.form_submit_button("Save"):
+        st.session_state.user_name = user_name
+        st.session_state.pass_word = pass_word
+        #send request to backend
+        data = {
+            "user_name": user_name if user_name != "" else st.session_state.user_name,
+            "pass_word": pass_word if pass_word != "" else st.session_state.pass_word,
+        }
+        url = st.session_state.host_location + "/api/user_setting"
+        response = requests.post(url, json=data)
+        if response.status_code == 200:
+            st.success("User Setting Saved!")
+        else:
+            st.error("User Setting Failed!")
     st.markdown("""## API Setting""")
+    binance_tab , okex_tab = st.tabs(["Binance", "OKEx"])
+    with binance_tab:
+        binance_api_setting_form = st.form(key="binance_api_setting_form")
+        binance_api_key = binance_api_setting_form.text_input("API Key")
+        binance_secret_key = binance_api_setting_form.text_input("Secret Key")
+        if binance_api_setting_form.form_submit_button("Save"):
+            st.session_state.binance_api_key = binance_api_key
+            st.session_state.binance_secret_key = binance_secret_key
+            #send request to backend
+            data = {
+                "user_name": st.session_state.user_name,
+                "api_key": binance_api_key if binance_api_key != "" else st.session_state.binance_api_key,
+                "secret_key": binance_secret_key if binance_secret_key != "" else st.session_state.binance_secret_key,
+            }
+            url = st.session_state.host_location + "/api/binance_api_setting"
+            response = requests.post(url, json=data)
+            if response.status_code == 200:
+                st.success("Binance API Setting Saved!")
+            else:
+                st.error("Binance API Setting Failed!")
+    with okex_tab:
+        okex_api_setting_form = st.form(key="okex_api_setting_form")
+        okex_api_key = okex_api_setting_form.text_input("API Key")
+        okex_api_secret = okex_api_setting_form.text_input("Secret Key")
+        okex_passphrase = okex_api_setting_form.text_input("Passphrase")
+        if okex_api_setting_form.form_submit_button("Save"):
+            st.session_state.okex_api_key = okex_api_key
+            #send request to backend
+            data = {
+                "user_name": st.session_state.user_name,
+                "api_key": okex_api_key if okex_api_key != "" else st.session_state.okex_api_key,
+                "api_secret": okex_api_secret if okex_api_secret != "" else st.session_state.okex_api_secret,
+                "passphrase": okex_passphrase if okex_passphrase != "" else st.session_state.okex_passphrase,
+            }
+            url = st.session_state.host_location + "/api/okex_api_setting"
+            response = requests.post(url, json=data)
+            if response.status_code == 200:
+                st.success("OKEx API Setting Saved!")
+            else:
+                st.error("OKEx API Setting Failed!")
     st.markdown("""## Webhook Setting""")
-    st.markdown("""## Tradingview Setting""")
-    st.markdown("""## Exchange Setting""")
+    exchange = st.selectbox("Exchange", ["Binance", "OKEx"])
+    class_SF = st.selectbox("Class", ["spot", "future"]) if exchange == "Binance" else st.selectbox("Class", ["spot", "swap"])
+    if exchange == "Binance":
+        exchange_ex = binance({
+            "options": {
+                "defaultType": class_SF
+            }
+        })
+    elif exchange == "OKEx":
+        exchange_ex = okex5({
+            "options": {
+                "defaultType": class_SF,
+                "fetchMarkets": [class_SF],
+            }
+        })
+    exchange_ex.load_markets()
+    symbol = st.selectbox("Symbol", list(exchange_ex.symbols))
+    webhook_setting_form = st.form(key="webhook_setting_form")
+    order_type = webhook_setting_form.selectbox("Order Type", ["Limit", "Market"])
+    quantity_rule = exchange_ex.markets[symbol]['limits']['amount']
+    leverage_rule = exchange_ex.markets[symbol]['limits']['leverage']
+    quantity = webhook_setting_form.number_input("Quantity", min_value=quantity_rule['min'], max_value=quantity_rule['max'],help=f"Min: {quantity_rule['min']}, Max: {quantity_rule['max']}")
     
+    if webhook_setting_form.form_submit_button("Generate Tradingview alert"):
+        st.success("Tradingview alert generated!")
+        
 
 def welcome():
     st.markdown("""# Welcome to the Tradingview to Exchange App""")
