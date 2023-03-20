@@ -289,25 +289,27 @@ def Analysis():
                     )
                 )
                 st.plotly_chart(fig, use_container_width=True)
-    st.markdown("""### Trade Symbol""")#connect to database
-    trade_symbol_data = {
-        "Symbol": ["LINK","BTC","ETH","ADA","DOGE","XRP","DOT","LTC","BCH","UNI","SOL","BNB"],
-        "Total Trades": [randint(2, 100) for i in range(12)],
-        "Profit": [randint(2, 100) for i in range(12)],
-    }
-    trade_symbol_df = pd.DataFrame(trade_symbol_data)
-    fig = px.pie(trade_symbol_df, values='Total Trades', names='Symbol', title='Total Trades', hover_data=['Profit'], labels={'Profit':'Profit'})
-    fig.update_traces(textposition='inside', textinfo='percent+label')
-    fig.update_layout(
-        xaxis_title="Symbol",
-        yaxis_title="Total Trades",
-        font=dict(
-            family="Helvetica, monospace",
-            size=18,
-            color="RebeccaPurple"
+        st.markdown("""### Trade Symbol""")#connect to database
+        trade_symbol_data = {
+            "Symbol": ["LINK","BTC","ETH","ADA","DOGE","XRP","DOT","LTC","BCH","UNI","SOL","BNB"],
+            "Total Trades": [randint(2, 100) for i in range(12)],
+            "Profit": [randint(2, 100) for i in range(12)],
+        }
+        trade_symbol_df = pd.DataFrame(trade_symbol_data)
+        fig = px.pie(trade_symbol_df, values='Total Trades', names='Symbol', title='Total Trades', hover_data=['Profit'], labels={'Profit':'Profit'})
+        fig.update_traces(textposition='inside', textinfo='percent+label')
+        fig.update_layout(
+            xaxis_title="Symbol",
+            yaxis_title="Total Trades",
+            font=dict(
+                family="Helvetica, monospace",
+                size=18,
+                color="RebeccaPurple"
+            )
         )
-    )
-    st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True)
+    with tab2:
+        st.markdown("""### Performance""")# compare with S&P500 and other index roi , index roi need to scrape from yahoo finance.
 
 def Dashboard():
     if is_login():
