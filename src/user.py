@@ -121,12 +121,6 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
 
     # Try to convert datetimes into a standard format (datetime, no timezone)
     for col in df.columns:
-        if is_object_dtype(df[col]):
-            try:
-                df[col] = pd.to_datetime(df[col])
-            except Exception:
-                pass
-
         if is_datetime64_any_dtype(df[col]):
             df[col] = df[col].dt.tz_localize(None)
 
@@ -354,9 +348,10 @@ def Dashboard():
         st.plotly_chart(fig_daily_roi, use_container_width=True)
         st.markdown("""## Orders""") #connect to database
         tab1 , tab2, tab3 = st.tabs(["Open Orders", "Closed Orders", "All Orders"])
-        with open('src/sample_data.json') as f:
+        with open('src/sample_data.json') as f: #this can change to connect api server
             openorder_data = json.load(f)
-        openorder_df = pd.DataFrame(Caculate_Unrealized_Pnl(openorder_data,binance_f_ex))
+        with st.spinner("Loading Data..."):
+            openorder_df = pd.DataFrame(Caculate_Unrealized_Pnl(openorder_data["open_orders"],binance_f_ex)).T
         with tab1:
             st.markdown("""### Open Orders""")
             st.dataframe(filter_dataframe(openorder_df))
