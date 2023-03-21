@@ -56,6 +56,7 @@ def generate_Token(user_name:str):
 class Order(BaseModel):
     username: str # Username of the user who placed the order and to query the api_key and secret_key
     symbol: str # Symbol of the coin to buy
+    exchange: str # Exchange to buy the coin
     side: str # Buy or sell   
     type: str # Market or limit
     quantity: float # Quantity of the coin to buy

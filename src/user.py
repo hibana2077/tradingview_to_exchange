@@ -2,11 +2,12 @@
 import requests
 import streamlit as st
 import pandas as pd
+import json
 import openai
 from random import randint
 from plotly import graph_objects as go
 from plotly import express as px
-from ccxt import binance,okex5
+from ccxt import binance,okex5,Exchange,bitget,bybit
 from datetime import datetime, timedelta, date
 
 from pandas.api.types import (
@@ -15,6 +16,18 @@ from pandas.api.types import (
     is_numeric_dtype,
     is_object_dtype,
 )
+
+binance_f_ex = binance({
+    "options": {
+        "defaultType": "future",
+    },
+})
+
+binance_s_ex = binance({
+    "options": {
+        "defaultType": "spot",
+    },
+})
 
 st.set_page_config(
     page_title="TV2EX -- Quantitative Trading Platform",
@@ -79,6 +92,17 @@ def best_win_rate_color(win_rate:int):
         return "#FFE940"
     else:
         return "#67E82E"
+
+def Caculate_Unrealized_Pnl(open_orders_data:dict,exchange:Exchange):
+    for symbol in open_orders_data.keys():
+        symbol_history_df = pd.DataFrame(exchange.fetch_ohlcv(symbol, '1m', limit=10))
+        most_recent_price_index = symbol_history_df[4].idxmax()
+        most_recent_price = symbol_history_df[4][most_recent_price_index]
+        if open_orders_data[symbol]['side'] == 'buy':
+            open_orders_data[symbol]['Unrealized'] = round((most_recent_price - open_orders_data[symbol]['entry_price'])*open_orders_data[symbol]['entry_quantity'],2)
+        else:
+            open_orders_data[symbol]['Unrealized'] = round((open_orders_data[symbol]['entry_price'] - most_recent_price)*open_orders_data[symbol]['entry_quantity'],2)
+    return open_orders_data
 
 def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -330,16 +354,12 @@ def Dashboard():
         st.plotly_chart(fig_daily_roi, use_container_width=True)
         st.markdown("""## Orders""") #connect to database
         tab1 , tab2, tab3 = st.tabs(["Open Orders", "Closed Orders", "All Orders"])
+        with open('src/sample_data.json') as f:
+            openorder_data = json.load(f)
+        openorder_df = pd.DataFrame(Caculate_Unrealized_Pnl(openorder_data,binance_f_ex))
         with tab1:
             st.markdown("""### Open Orders""")
-            openorder_data = {
-                "symbol": ["BTCUSDT", "ETHUSDT", "BNBUSDT", "ADAUSDT", "DOGEUSDT", "DOTUSDT", "XRPUSDT", "LTCUSDT", "LINKUSDT", "SOLUSDT"],
-                "side": ["Buy", "Sell", "Buy", "Sell", "Buy", "Sell", "Buy", "Sell", "Buy", "Sell"],
-                "price": ["$50,000", "$2,000", "$400", "$2.50", "$0.30", "$40", "$1.50", "$200", "$40", "$50"],
-                "quantity": ["0.001", "0.01", "0.1", "10", "1000", "10", "100", "1", "10", "1"],
-                "Unrealized PnL": ["$14", "$2", "$4", "$0.25", "$0.03", "$4", "$0.15", "$20", "$4", "$5"],
-            }#connect to database
-            st.table(openorder_data)
+            st.dataframe(filter_dataframe(openorder_df))
         with tab2:
             st.markdown("""### Closed Orders""")
             closedorder_data = {
