@@ -347,7 +347,7 @@ def Dashboard():
         fig_daily_roi = px.line(daily_roi_df, x="date", y="ROI", title="Daily ROI")
         st.plotly_chart(fig_daily_roi, use_container_width=True)
         st.markdown("""## Orders""") #connect to database
-        tab1 , tab2, tab3 = st.tabs(["Open Orders", "Closed Orders", "All Orders"])
+        tab1 , tab2 = st.tabs(["Open Orders", "Closed Orders"])
         with open('src/sample_data.json') as f: #this can change to connect api server
             openorder_data = json.load(f)
         with st.spinner("Loading Data..."):
@@ -365,16 +365,6 @@ def Dashboard():
                 "Realized PnL": ["$1.4", "$0.2", "$0.4", "$0.25", "$0.03", "$0.4", "$0.15", "$2.0", "$0.4", "$0.5"],
             }
             st.table(closedorder_data)
-        with tab3:
-            st.markdown("""### All Orders""")
-            allorder_data = {
-                "symbol": ["BTCUSDT", "ETHUSDT", "BNBUSDT", "ADAUSDT", "DOGEUSDT", "DOTUSDT", "XRPUSDT", "LTCUSDT", "LINKUSDT", "SOLUSDT","DODOUSDT", "UNIUSDT", "FILUSDT", "AAVEUSDT", "ICPUSDT", "SUSHIUSDT", "AVAXUSDT", "XLMUSDT", "BCHUSDT", "EOSUSDT"],
-                "side": ["Buy", "Sell", "Buy", "Sell", "Buy", "Sell", "Buy", "Sell", "Buy", "Sell","Buy", "Sell", "Buy", "Sell", "Buy", "Sell", "Buy", "Sell", "Buy", "Sell"],
-                "price": ["$50,000", "$2,000", "$400", "$2.50", "$0.30", "$40", "$1.50", "$200", "$40", "$50","$5.50", "$30", "$60", "$350", "$50", "$10", "$70", "$0.50", "$600", "$5"],
-                "quantity": ["0.001", "0.01", "0.1", "10", "1000", "10", "100", "1", "10", "1","0.1", "0.1", "0.01", "0.1", "0.1", "0.01", "0.1", "100", "0.01", "0.1"],
-                "status":["Open","Open","Open","Open","Open","Open","Open","Open","Open","Open","Closed","Closed","Closed","Closed","Closed","Closed","Closed","Closed","Closed","Closed"],
-            }
-            st.table(allorder_data)
         
 
 def Trend():
