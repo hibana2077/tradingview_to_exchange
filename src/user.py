@@ -7,7 +7,7 @@ import openai
 from random import randint
 from plotly import graph_objects as go
 from plotly import express as px
-from ccxt import binance,okex5,Exchange,bitget,bybit
+from ccxt import okex5,bitget,bybit,binanceusdm,Exchange,binance
 from datetime import datetime, timedelta, date
 
 from pandas.api.types import (
@@ -17,17 +17,25 @@ from pandas.api.types import (
     is_object_dtype,
 )
 
-binance_f_ex = binance({
-    "options": {
-        "defaultType": "future",
+binance_f_ex = binanceusdm({
+    'option': {
+        "defaultType": "swap",
+        "fetchMarkets": ["swap"]
     },
 })
 
 binance_s_ex = binance({
     "options": {
         "defaultType": "spot",
+        "fetchMarkets": ["spot"]
     },
 })
+
+exchange_dict = {
+    "OKEx": okex5({}),
+    "Bitget": bitget({}),
+    "Bybit": bybit({}),
+}
 
 st.set_page_config(
     page_title="TV2EX -- Quantitative Trading Platform",
@@ -92,6 +100,16 @@ def best_win_rate_color(win_rate:int):
         return "#FFE940"
     else:
         return "#67E82E"
+
+def fliter_symbols_list(symbols_list:list,type:str,exchange:Exchange):
+    '''
+    This function is used to filter symbols list by type(swap,spot)
+    '''
+    filtered_symbols_list = []
+    for symbol in symbols_list:
+        if exchange.markets[symbol]['type'] == type:
+            filtered_symbols_list.append(symbol)
+    return filtered_symbols_list
 
 def Caculate_Unrealized_Pnl(open_orders_data:dict,exchange:Exchange):
     for symbol in open_orders_data.keys():
@@ -434,23 +452,16 @@ def Setting():
             else:
                 st.error("OKEx API Setting Failed!")
     st.markdown("""## Webhook Setting""")
-    exchange = st.selectbox("Exchange", ["Binance", "OKEx"])
-    class_SF = st.selectbox("Class", ["spot", "future"]) if exchange == "Binance" else st.selectbox("Class", ["spot", "swap"])
+    exchange = st.selectbox("Exchange", ["Binance", "OKEx","Bitget","Bybit"])
+    class_SF = st.selectbox("Class", ["spot", "swap"])
     if exchange == "Binance":
-        exchange_ex = binance({
-            "options": {
-                "defaultType": class_SF
-            }
-        })
-    elif exchange == "OKEx":
-        exchange_ex = okex5({
-            "options": {
-                "defaultType": class_SF,
-                "fetchMarkets": [class_SF],
-            }
-        })
+        exchange_ex = binance_f_ex if class_SF == "swap" else binance_s_ex
+        symbol_list = list(exchange_ex.symbols)
+    else:
+        exchange_ex = exchange_dict[exchange]
+        symbol_list = fliter_symbols_list(exchange_ex, class_SF)
     exchange_ex.load_markets()
-    symbol = st.selectbox("Symbol", list(exchange_ex.symbols))
+    symbol = st.selectbox("Symbol", symbol_list)
     webhook_setting_form = st.form(key="webhook_setting_form")
     order_type = webhook_setting_form.selectbox("Order Type", ["Limit", "Market"])
     quantity_rule = exchange_ex.markets[symbol]['limits']['amount']
