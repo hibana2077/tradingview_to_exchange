@@ -456,6 +456,7 @@ def Setting():
     class_SF = st.selectbox("Class", ["spot", "swap"])
     if exchange == "Binance":
         exchange_ex = binance_f_ex if class_SF == "swap" else binance_s_ex
+        exchange_ex.load_markets()
         symbol_list = list(exchange_ex.symbols)
     else:
         exchange_ex = exchange_dict[exchange]
