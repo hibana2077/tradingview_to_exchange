@@ -140,3 +140,9 @@ backgroundImage: url('https://marp.app/assets/hero-background.svg')
 ![bg left](https://media.discordapp.net/attachments/868759966431973416/1100062738648158218/qrcode_github.com.png)
 
 - 歡迎提交issue或是餵食star
+
+---
+
+<!-- _class: lead -->
+
+# 謝謝
