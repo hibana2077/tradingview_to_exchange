@@ -135,6 +135,12 @@ backgroundImage: url('https://marp.app/assets/hero-background.svg')
 
 ---
 
+## Tech Stack
+
+![w:800](https://media.discordapp.net/attachments/868759966431973416/1100364788334334063/3089e346c33c689c.png?width=895&height=671)
+
+---
+
 ## Github Repository
 
 ![bg left](https://media.discordapp.net/attachments/868759966431973416/1100062738648158218/qrcode_github.com.png)
