@@ -11,5 +11,9 @@
   "devDependencies": {
     "@types/node": "^18",
     "nuxt": "^3.4.3"
+  },
+  "dependencies": {
+    "primeicons": "^6.0.1",
+    "primevue": "^3.28.0"
   }
 }
