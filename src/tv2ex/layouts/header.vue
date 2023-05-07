@@ -3,7 +3,7 @@
     <MegaMenu :model="items" orientation="horizontal">
     <template #start>
         <span class="flex align-items-center">
-            <img alt="logo" src="https://primefaces.org/cdn/primevue/images/primevue-logo-dark.svg" height="24" class="mr-2" />
+            <img alt="logo" src="../assets/logo.svg" height="48" class="mr-2" />
         </span>
     </template>
     <template #end>

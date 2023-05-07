@@ -1,5 +1,5 @@
 
-# Dev progress
+# Dev progress (Nuxt + PrimeVue)
 
 ## Install
 
@@ -31,4 +31,15 @@ export default defineNuxtConfig({
 		transpile: ["primevue"],
 	}
 })
+```
+
+## Plugins
+
+If you want to use some components globally, you can use plugins.
+And more details, you can see [here](https://primevue.org/megamenu/).
+
+## Run
+
+```bash
+$ npm run dev -o
 ```
