@@ -1,3 +1,11 @@
+<!--
+ * @Author: hibana2077 hibana2077@gmail.com
+ * @Date: 2023-05-06 15:49:45
+ * @LastEditors: hibana2077 hibana2077@gmail.com
+ * @LastEditTime: 2023-05-08 07:45:03
+ * @FilePath: \tradingview_to_exchange\src\tv2ex\layouts\header.vue
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
 
 <template>
     <MegaMenu :model="items" orientation="horizontal">
@@ -17,64 +25,25 @@
   
   const items = ref([
     {
-        label: 'Videos',
-        icon: 'pi pi-fw pi-video',
-        items: [
-            [
-                {
-                    label: 'Video 1',
-                    items: [{ label: 'Video 1.1' }, { label: 'Video 1.2' }]
-                },
-                {
-                    label: 'Video 2',
-                    items: [{ label: 'Video 2.1' }, { label: 'Video 2.2' }]
-                }
-            ],
-            [
-                {
-                    label: 'Video 3',
-                    items: [{ label: 'Video 3.1' }, { label: 'Video 3.2' }]
-                },
-                {
-                    label: 'Video 4',
-                    items: [{ label: 'Video 4.1' }, { label: 'Video 4.2' }]
-                }
-            ]
-        ]
+        label: 'Pricing',
+        icon: 'pi pi-fw pi-money-bill',
+        items: []
     },
     {
-        label: 'Users',
+        label: 'Contacts',
         icon: 'pi pi-fw pi-users',
         items: [
             [
                 {
-                    label: 'User 1',
-                    items: [{ label: 'User 1.1' }, { label: 'User 1.2' }]
+                    label: 'Discord'
                 },
                 {
-                    label: 'User 2',
-                    items: [{ label: 'User 2.1' }, { label: 'User 2.2' }]
-                }
-            ],
-            [
-                {
-                    label: 'User 3',
-                    items: [{ label: 'User 3.1' }, { label: 'User 3.2' }]
+                    label: 'Telegram'
                 },
                 {
-                    label: 'User 4',
-                    items: [{ label: 'User 4.1' }, { label: 'User 4.2' }]
+                    label: 'Twitter'
                 }
-            ],
-            [
-                {
-                    label: 'User 5',
-                    items: [{ label: 'User 5.1' }, { label: 'User 5.2' }]
-                },
-                {
-                    label: 'User 6',
-                    items: [{ label: 'User 6.1' }, { label: 'User 6.2' }]
-                }
+
             ]
         ]
     },
@@ -100,32 +69,6 @@
                 {
                     label: 'Event 4',
                     items: [{ label: 'Event 4.1' }, { label: 'Event 4.2' }]
-                }
-            ]
-        ]
-    },
-    {
-        label: 'Settings',
-        icon: 'pi pi-fw pi-cog',
-        items: [
-            [
-                {
-                    label: 'Setting 1',
-                    items: [{ label: 'Setting 1.1' }, { label: 'Setting 1.2' }]
-                },
-                {
-                    label: 'Setting 2',
-                    items: [{ label: 'Setting 2.1' }, { label: 'Setting 2.2' }]
-                },
-                {
-                    label: 'Setting 3',
-                    items: [{ label: 'Setting 3.1' }, { label: 'Setting 3.2' }]
-                }
-            ],
-            [
-                {
-                    label: 'Technology 4',
-                    items: [{ label: 'Setting 4.1' }, { label: 'Setting 4.2' }]
                 }
             ]
         ]
