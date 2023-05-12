@@ -2,14 +2,14 @@
  * @Author: hibana2077 hibana2077@gmail.com
  * @Date: 2023-05-06 16:04:00
  * @LastEditors: hibana2077 hibana2077@gmail.com
- * @LastEditTime: 2023-05-12 09:13:56
+ * @LastEditTime: 2023-05-12 10:20:07
  * @FilePath: \tradingview_to_exchange\src\tv2ex\pages\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
  
 <div class="bg-gray-900 py-3 px-6 shadow-2 flex align-items-center justify-content-between relative">
-    <img src="images/blocks/logos/hyper-light.svg" alt="Image" height="50">
+    <img src="../assets/blocks/logos/hyper-light.svg" alt="Image" height="50">
     <a class="cursor-pointer block lg:hidden text-gray-400"
         v-styleclass="{ selector: '@next', enterClass: 'hidden', leaveToClass: 'hidden', hideOnOutsideClick: true }">
         <i class="pi pi-bars text-4xl"></i>
@@ -93,26 +93,26 @@
             <Button type="button" label="Claim Your Account" class="block mt-7 mb-7 lg:mb-0 p-button-rounded p-button-success p-button-lg font-medium"></Button>
         </div>
         <div class="w-12 lg:w-6 text-center lg:text-right overflow-hidden">
-            <img src="images/blocks/hero/hero-illustration.svg" alt="Image" class="w-full lg:w-auto">
+            <img src="../assets/blocks/hero/hero-illustration.svg" alt="Image" class="w-full lg:w-auto">
         </div>
     </div>
 </div>
 <div class="surface-section px-4 py-8 md:px-6 lg:px-8">
     <div class="flex justify-content-evenly flex-wrap">
         <div class="p-3">
-            <img src="images/blocks/logos/peak-500.svg" alt="Image" height="50">
+            <img src="../assets/blocks/logos/peak-500.svg" alt="Image" height="50">
         </div>
         <div class="p-3">
-            <img src="images/blocks/logos/charot-500.svg" alt="Image" height="50">
+            <img src="../assets/blocks/logos/charot-500.svg" alt="Image" height="50">
         </div>
         <div class="p-3">
-            <img src="images/blocks/logos/hyper-500.svg" alt="Image" height="50">
+            <img src="../assets/blocks/logos/hyper-500.svg" alt="Image" height="50">
         </div>
         <div class="p-3">
-            <img src="images/blocks/logos/hodly-500.svg" alt="Image" height="50">
+            <img src="../assets/blocks/logos/hodly-500.svg" alt="Image" height="50">
         </div>
         <div class="p-3">
-            <img src="images/blocks/logos/franki-500.svg" alt="Image" height="50">
+            <img src="../assets/blocks/logos/franki-500.svg" alt="Image" height="50">
         </div>
     </div>
 </div>
@@ -121,7 +121,7 @@
     <div class="text-700 text-center mb-3">Risus feugiat in ante metus. Lacus suspendisse faucibus interdum posuere lorem.</div>
     <div class="flex flex-wrap">
         <div class="w-full lg:w-6 xl:w-3 p-5">
-            <img src="images/blocks/feature/feature-illustration-1.svg" alt="Image" class="w-full">
+            <img src="../assets/blocks/feature/feature-illustration-1.svg" alt="Image" class="w-full">
             <div class="mt-3 mb-2 font-medium text-900 text-xl">Ornare Arcu Odio</div>
             <span class="text-700 line-height-3">Quisque sagittis purus sit amet volutpat consequat mauris nunc. Scelerisque eleifend.</span>
             <a tabindex="0" class="text-blue-500 font-medium flex align-items-center mt-2">
@@ -130,7 +130,7 @@
             </a>
         </div>
         <div class="w-full lg:w-6 xl:w-3 p-5">
-            <img src="images/blocks/feature/feature-illustration-2.svg" alt="Image" class="w-full">
+            <img src="../assets/blocks/feature/feature-illustration-2.svg" alt="Image" class="w-full">
             <div class="mt-3 mb-2 font-medium text-900 text-xl">Sem Nulla Pharetra</div>
             <span class="text-700 line-height-3">Quisque sagittis purus sit amet volutpat consequat mauris nunc. Scelerisque eleifend.</span>
             <a tabindex="0" class="text-blue-500 font-medium flex align-items-center mt-2">
@@ -139,7 +139,7 @@
             </a>
         </div>
         <div class="w-full lg:w-6 xl:w-3 p-5">
-            <img src="images/blocks/feature/feature-illustration-3.svg" alt="Image" class="w-full">
+            <img src="../assets/blocks/feature/feature-illustration-3.svg" alt="Image" class="w-full">
             <div class="mt-3 mb-2 font-medium text-900 text-xl">Facilisi Etiam Dignissim</div>
             <span class="text-700 line-height-3">Quisque sagittis purus sit amet volutpat consequat mauris nunc. Scelerisque eleifend.</span>
             <a tabindex="0" class="text-blue-500 font-medium flex align-items-center mt-2">
@@ -148,7 +148,7 @@
             </a>
         </div>
         <div class="w-full lg:w-6 xl:w-3 p-5">
-            <img src="images/blocks/feature/feature-illustration-4.svg" alt="Image" class="w-full">
+            <img src="../assets/blocks/feature/feature-illustration-4.svg" alt="Image" class="w-full">
             <div class="mt-3 mb-2 font-medium text-900 text-xl">Risus Feugiat In Ante</div>
             <span class="text-700 line-height-3">Quisque sagittis purus sit amet volutpat consequat mauris nunc. Scelerisque eleifend.</span>
             <a tabindex="0" class="text-blue-500 font-medium flex align-items-center mt-2">
@@ -163,7 +163,7 @@
     <div class="text-700 text-center mb-5 line-height-3">Libero justo laoreet sit amet cursus sit amet dictum. Auctor neque vitae tempus quam pellentesque nec nam.</div>
     <div class="flex lg:justify-content-center mb-5">
         <div class="py-3 pr-8 pl-3 w-30rem hidden lg:block">
-            <img src="images/blocks/feature/feature-timeline-1.png" alt="Image" class="w-full mr-8">
+            <img src="../assets/blocks/feature/feature-timeline-1.png" alt="Image" class="w-full mr-8">
         </div>
         <div class="flex flex-column align-items-center w-2rem">
             <span class="bg-blue-500 text-0 flex align-items-center justify-content-center border-circle" style="min-width:2.5rem; min-height: 2.5rem">1</span>
@@ -176,7 +176,7 @@
                 <div class="mb-2 line-height-3"><span class="text-900 font-medium">Sed lectus vestibulum</span> mattis ullamcorper velit. Laoreet sit amet cursus sit.</div>
                 <div class="line-height-3"><span class="text-900 font-medium">Fames ac turpis</span> egestas sed tempus urna et. Cursus turpis massa.</div>
             </div>
-            <img src="images/blocks/feature/feature-timeline-1.png" alt="Image" class="w-full mt-3 block lg:hidden">
+            <img src="../assets/blocks/feature/feature-timeline-1.png" alt="Image" class="w-full mt-3 block lg:hidden">
         </div>
     </div>
     <div class="flex justify-content-center mb-5">
@@ -187,19 +187,19 @@
                 <div class="mb-2 line-height-3"><span class="text-900 font-medium">Quis hendrerit dolor</span> magna eget est. Pellentesque pulvinar pellentesque.</div>
                 <div class="line-height-3"><span class="text-900 font-medium">Lectus urna duis</span> convallis convallis tellus id interdum velit laoreet.</div>
             </div>
-            <img src="images/blocks/feature/feature-timeline-2.png" alt="Image" class="w-full mt-3 block lg:hidden">
+            <img src="../assets/blocks/feature/feature-timeline-2.png" alt="Image" class="w-full mt-3 block lg:hidden">
         </div>
         <div class="flex flex-column align-items-center w-2rem flex-order-0 lg:flex-order-1">
             <span class="bg-yellow-500 text-0 flex align-items-center justify-content-center border-circle" style="min-width:2.5rem; min-height: 2.5rem">2</span>
             <div class="h-full bg-yellow-500" style="width: 2px; min-height: 4rem"></div>
         </div>
         <div class="py-3 pl-8 pr-3 w-30rem hidden lg:block flex-order-2">
-            <img src="images/blocks/feature/feature-timeline-2.png" alt="Image" class="w-full mr-8">
+            <img src="../assets/blocks/feature/feature-timeline-2.png" alt="Image" class="w-full mr-8">
         </div>
     </div>
     <div class="flex justify-content-center">
         <div class="py-3 pr-8 pl-3 w-30rem hidden lg:block">
-            <img src="images/blocks/feature/feature-timeline-3.png" alt="Image" class="w-full mr-8">
+            <img src="../assets/blocks/feature/feature-timeline-3.png" alt="Image" class="w-full mr-8">
         </div>
         <div class="flex flex-column align-items-center w-2rem">
             <span class="bg-cyan-500 text-0 flex align-items-center justify-content-center border-circle" style="min-width:2.5rem; min-height: 2.5rem">3</span>
@@ -212,7 +212,7 @@
                 <div class="mb-2 line-height-3"><span class="text-900 font-medium">Egestas dui id</span> ornare arcu odio ut. Mi bibendum neque egestas congue.</div>
                 <div class="line-height-3"><span class="text-900 font-medium">Sed velit dignissim</span> sodales ut eu. Massa placerat duis ultricies lacus.</div>
             </div>
-            <img src="images/blocks/feature/feature-timeline-3.png" alt="Image" class="w-full mt-3 block lg:hidden">
+            <img src="../assets/blocks/feature/feature-timeline-3.png" alt="Image" class="w-full mt-3 block lg:hidden">
         </div>
     </div>
 </div>
@@ -258,7 +258,7 @@
             <button v-ripple class="appearance-none p-3 bg-cyan-500 hover:bg-cyan-300 cursor-pointer font-medium gray-900 border-none p-component transition-colors transition-duration-150 p-ripple" style="border-radius: 35px">Reserve Your Username</button>
         </div>
             
-        <img src="images/blocks/cta/cta-browser.png" alt="Image" class="static lg:absolute block mx-auto" style="height: 400px; top: -2rem; right: -1rem">
+        <img src="../assets/blocks/cta/cta-browser.png" alt="Image" class="static lg:absolute block mx-auto" style="height: 400px; top: -2rem; right: -1rem">
     </div>
 </div>
 <div class="surface-section px-4 py-8 md:px-6 lg:px-8">
@@ -343,7 +343,7 @@
 <div class="surface-section px-4 py-8 md:px-6 lg:px-8">
     <div class="flex align-items-start lg:align-items-center lg:justify-content-between pb-5 border-bottom-1 border-300 flex-column lg:flex-row">
         <div class="pr-0 lg:pr-8">
-            <img src="images/blocks/logos/bastion-700.svg" alt="Image" height="50">
+            <img src="../assets/blocks/logos/bastion-700.svg" alt="Image" height="50">
             <p class="text-600 line-height-3 text-xl mb-0 mt-5">Consequat nisl vel pretium lectus quam. Scelerisque eu ultrices vitae auctor eu augue ut lectus arcu. Integer quis auctor elit sed.</p>
         </div>
         <Button label="Get Started" class="mt-5 lg:mt-0 white-space-nowrap min-w-max"></Button>
