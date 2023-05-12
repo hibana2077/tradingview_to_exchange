@@ -13,6 +13,8 @@ $ npm install primevue
 $ npm install primeicons
 
 $ npm install primeflex --save
+
+$ npm install sass sass-loader --save-dev
 ```
 
 ## Config
@@ -25,7 +27,8 @@ export default defineNuxtConfig({
         "primevue/resources/themes/tailwind-light/theme.css",
         "primevue/resources/primevue.css",
         "primeicons/primeicons.css",//add this to css list , if you want to use primeicons
-        "primeflex/primeflex.css"
+        "primeflex/primeflex.css",
+        "~/assets/scss/main.scss"//add this to css list , if you want to use sass. It should be placed with your file path.
     ],
 	build: {
 		transpile: ["primevue"],
