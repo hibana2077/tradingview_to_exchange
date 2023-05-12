@@ -11,7 +11,9 @@
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.6.7",
     "@types/node": "^18",
-    "nuxt": "^3.4.3"
+    "nuxt": "^3.4.3",
+    "sass": "^1.62.1",
+    "sass-loader": "^13.2.2"
   },
   "dependencies": {
     "primeflex": "^3.3.0",

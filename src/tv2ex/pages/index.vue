@@ -2,7 +2,7 @@
  * @Author: hibana2077 hibana2077@gmail.com
  * @Date: 2023-05-06 16:04:00
  * @LastEditors: hibana2077 hibana2077@gmail.com
- * @LastEditTime: 2023-05-12 10:20:07
+ * @LastEditTime: 2023-05-12 17:11:57
  * @FilePath: \tradingview_to_exchange\src\tv2ex\pages\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -18,58 +18,22 @@
         <section></section>
         <ul class="list-none p-0 m-0 flex lg:align-items-center text-gray-400 select-none flex-column lg:flex-row cursor-pointer">
             <li>
-                <a v-ripple class="flex px-0 lg:px-5 py-3 align-items-center hover:text-blue-600 font-medium transition-colors transition-duration-150 p-ripple"
-                    v-styleclass="{ selector: '@next', enterClass: 'hidden', enterActiveClass: 'scalein', leaveToClass: 'hidden', leaveActiveClass: 'fadeout', hideOnOutsideClick: true }">
-                    <span>Products</span>
-                    <i class="pi pi-chevron-down ml-auto lg:ml-3"></i>
+                <a v-ripple class="flex px-0 lg:px-5 py-3 text-gray-200 hover:text-blue-600 font-medium transition-colors transition-duration-150 p-ripple" href="#Features"  style="text-decoration: none ">
+                    <span>Features</span>
                 </a>
-                <div class="lg:absolute bg-gray-800 hidden origin-top left-0 top-100 w-full">
-                    <div class="flex flex-wrap p-6">
-                        <div class="w-full lg:w-6 mb-4 lg:mb-0">
-                            <span class="block font-normal text-2xl mb-4 text-white">Products</span>
-                            <p class="line-height-3 m-0 text-gray-400">Nisl rhoncus mattis rhoncus urna. Sed enim ut sem viverra aliquet eget sit amet tellus.</p>
-                        </div>
-                        <div class="w-full lg:w-6">
-                            <div class="flex flex-wrap border-bottom-1 border-gray-700 pb-3 mb-3">
-                                <div class="px-0 lg:px-3 py-3">
-                                    <span class="text-white">Shodan</span>
-                                    <p class="text-sm text-gray-400 mt-2 mb-0 line-height-3">Porta lorem mollis aliquam ut porttitor leo a diam.</p>
-                                </div>
-                                <div class="px-0 lg:px-3 py-3">
-                                    <span class="text-white">Bastion</span>
-                                    <p class="text-sm text-gray-400 mt-2 mb-0 line-height-3">Amet purus gravida quis blandit.</p>
-                                </div>
-                                <div class="px-0 lg:px-3 py-3">
-                                    <span class="text-white">Hodly</span>
-                                    <p class="text-sm text-gray-400 mt-2 mb-0 line-height-3">Aenean vel elit scelerisque mauris.</p>
-                                </div>
-                            </div>
-                            <div class="flex flex-wrap">
-                                <div class="px-0 lg:px-3 py-3">
-                                    <span class="text-white">Peak</span>
-                                    <p class="text-sm text-gray-400 mt-2 mb-0 line-height-3">Feugiat pretium nibh ipsum consequat.</p>
-                                </div>
-                                <div class="px-0 lg:px-3 py-3">
-                                    <span class="text-white">Franki</span>
-                                    <p class="text-sm text-gray-400 mt-2 mb-0 line-height-3">Tristique nulla aliquet enim tortor.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </li>
             <li>
-                <a v-ripple class="flex px-0 lg:px-5 py-3 hover:text-blue-600 font-medium transition-colors transition-duration-150 p-ripple">
+                <a v-ripple class="flex px-0 lg:px-5 py-3 text-gray-200 hover:text-blue-600 font-medium transition-colors transition-duration-150 p-ripple">
                     <span>Corporate</span>
                 </a>
             </li>
             <li>
-                <a v-ripple class="flex px-0 lg:px-5 py-3 hover:text-blue-600 font-medium transition-colors transition-duration-150 p-ripple">
+                <a v-ripple class="flex px-0 lg:px-5 py-3 text-gray-200 hover:text-blue-600 font-medium transition-colors transition-duration-150 p-ripple">
                     <span>Resources</span>
                 </a>
             </li>
             <li>
-                <a v-ripple class="flex px-0 lg:px-5 py-3 hover:text-blue-600 font-medium transition-colors transition-duration-150 p-ripple">
+                <a v-ripple class="flex px-0 lg:px-5 py-3 text-gray-200 hover:text-blue-600 font-medium transition-colors transition-duration-150 p-ripple" href="#pricing"  style="text-decoration: none ">
                     <span>Pricing</span>
                 </a>
             </li>
@@ -159,7 +123,7 @@
     </div>
 </div>
 <div class="surface-section px-4 py-8 md:px-6 lg:px-8 overflow-hidden">
-    <div class="font-bold text-900 text-3xl mb-3 text-center">Explore The Features</div>
+    <div class="font-bold text-900 text-3xl mb-3 text-center" id="Features">Explore The Features</div>
     <div class="text-700 text-center mb-5 line-height-3">Libero justo laoreet sit amet cursus sit amet dictum. Auctor neque vitae tempus quam pellentesque nec nam.</div>
     <div class="flex lg:justify-content-center mb-5">
         <div class="py-3 pr-8 pl-3 w-30rem hidden lg:block">
@@ -261,7 +225,7 @@
         <img src="../assets/blocks/cta/cta-browser.png" alt="Image" class="static lg:absolute block mx-auto" style="height: 400px; top: -2rem; right: -1rem">
     </div>
 </div>
-<div class="surface-section px-4 py-8 md:px-6 lg:px-8">
+<div class="surface-section px-4 py-8 md:px-6 lg:px-8" id="pricing">
     <div class="overflow-x-auto">
         <table class="w-full white-space-nowrap" style="border-collapse: collapse; border-spacing: 0">
             <thead>
@@ -272,17 +236,17 @@
                     </td>
                     <td class="surface-100 p-3 text-center">
                         <div class="text-900 text-xl font-medium mb-3">Basic</div>
-                        <div class="text-600 mb-3"><span class="text-3xl text-900">$10</span> /month</div>
+                        <div class="text-600 mb-3"><span class="text-3xl text-900">$5</span> /month</div>
                         <Button type="button" class="p-button-rounded" label="Free Trial"></Button>
                     </td>
                     <td class="surface-100 p-3 text-center">
                         <div class="text-900 text-xl font-medium mb-3">Premium</div>
-                        <div class="text-600 mb-3"><span class="text-3xl text-900">$20</span> /month</div>
+                        <div class="text-600 mb-3"><span class="text-3xl text-900">$9</span> /month</div>
                         <Button type="button" class="p-button-rounded" label="Buy Now"></Button>
                     </td>
                     <td class="surface-100 p-3 text-center">
                         <div class="text-900 text-xl font-medium mb-3">Enterprise</div>
-                        <div class="text-600 mb-3"><span class="text-3xl text-900">$30</span> /month</div>
+                        <div class="text-600 mb-3"><span class="text-3xl text-900">$12</span> /month</div>
                         <Button type="button" class="p-button-rounded p-button-outlined" label="Contact Us"></Button>
                     </td>
                 </tr>
@@ -409,7 +373,7 @@
         </div>
     </div>
     <div class="flex justify-content-between align-items-center py-5">
-        <span>&copy; 2021 Bastion Tech</span>
+        <span>&copy; {{ year }} Bastion Tech</span>
         <div class="flex align-items-center justify-content-between">
             <a class="cursor-pointer text-500 md:ml-3 ml-2">
                 <i class="pi pi-twitter text-xl"></i>
@@ -424,6 +388,12 @@
     </div>
 </div>
 </template>
+
+<script setup>
+const year = new Date().getFullYear();
+
+
+</script>
 
 <style>
 body {
