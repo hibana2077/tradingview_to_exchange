@@ -2,7 +2,7 @@
  * @Author: hibana2077 hibana2077@gmail.com
  * @Date: 2023-05-06 16:04:00
  * @LastEditors: hibana2077 hibana2077@gmail.com
- * @LastEditTime: 2023-05-12 17:11:57
+ * @LastEditTime: 2023-05-12 17:28:33
  * @FilePath: \tradingview_to_exchange\src\tv2ex\pages\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -39,7 +39,9 @@
             </li>
         </ul>
         <div class="flex justify-content-between lg:block border-top-1 lg:border-top-none border-gray-800 py-3 lg:py-0 mt-3 lg:mt-0">
-            <Button label="Login" class="p-button-text font-bold"></Button>
+            <NuxtLink to="/login" class="text-gray-400 hover:text-blue-600 transition-colors transition-duration-150">    
+                <Button label="Login" class="p-button-text font-bold"></Button>
+            </NuxtLink>
             <Button label="Register" class="ml-3 font-bold"></Button>
         </div>
     </div>
@@ -47,7 +49,7 @@
 <div class="bg-gray-900 px-4 py-8 md:px-6 lg:px-8">
     <div class="flex flex-wrap">
         <div class="w-12 lg:w-6 p-4">
-            <h1 class="text-6xl font-bold text-white mt-0 mb-3">Social CRM that helps you grow faster <span class="text-yellow-500 underline">for free</span></h1>
+            <h1 class="text-6xl font-bold text-white mt-0 mb-3">Trading Bot that helps your assets grow faster <span class="text-yellow-500 underline">for free</span></h1>
             <p class="text-3xl text-gray-400 mt-0 mb-5">Arcu cursus euismod quis viverra nibh cras. Amet justo donec enim diam vulputate ut.</p>
             <ul class="list-none p-0 m-0">
                 <li class="mb-3 flex align-items-center"><i class="pi pi-compass text-yellow-500 text-xl mr-2"></i><span class="text-gray-400 line-height-3">Senectus et netus et malesuada fames.</span></li>
