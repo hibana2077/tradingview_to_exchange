@@ -2,14 +2,16 @@
  * @Author: hibana2077 hibana2077@gmail.com
  * @Date: 2023-05-06 16:04:00
  * @LastEditors: hibana2077 hibana2077@gmail.com
- * @LastEditTime: 2023-05-12 17:28:33
+ * @LastEditTime: 2023-05-23 20:56:39
  * @FilePath: \tradingview_to_exchange\src\tv2ex\pages\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
  
 <div class="bg-gray-900 py-3 px-6 shadow-2 flex align-items-center justify-content-between relative">
-    <img src="../assets/blocks/logos/hyper-light.svg" alt="Image" height="50">
+    <NuxtLink :to="`/`">
+        <img src="../assets/blocks/logos/hyper-light.svg" alt="Image" height="50">
+    </NuxtLink>
     <a class="cursor-pointer block lg:hidden text-gray-400"
         v-styleclass="{ selector: '@next', enterClass: 'hidden', leaveToClass: 'hidden', hideOnOutsideClick: true }">
         <i class="pi pi-bars text-4xl"></i>
@@ -23,8 +25,8 @@
                 </a>
             </li>
             <li>
-                <a v-ripple class="flex px-0 lg:px-5 py-3 text-gray-200 hover:text-blue-600 font-medium transition-colors transition-duration-150 p-ripple">
-                    <span>Corporate</span>
+                <a v-ripple class="flex px-0 lg:px-5 py-3 text-gray-200 hover:text-blue-600 font-medium transition-colors transition-duration-150 p-ripple" href="#Exchanges"  style="text-decoration: none ">
+                    <span>Exchanges</span>
                 </a>
             </li>
             <li>
@@ -50,35 +52,40 @@
     <div class="flex flex-wrap">
         <div class="w-12 lg:w-6 p-4">
             <h1 class="text-6xl font-bold text-white mt-0 mb-3">Trading Bot that helps your assets grow faster <span class="text-yellow-500 underline">for free</span></h1>
-            <p class="text-3xl text-gray-400 mt-0 mb-5">Arcu cursus euismod quis viverra nibh cras. Amet justo donec enim diam vulputate ut.</p>
+            <p class="text-3xl text-gray-400 mt-0 mb-5">Leverage our smart Trading Bot to optimize your investments and accelerate asset growth, at no cost to you.</p>
             <ul class="list-none p-0 m-0">
-                <li class="mb-3 flex align-items-center"><i class="pi pi-compass text-yellow-500 text-xl mr-2"></i><span class="text-gray-400 line-height-3">Senectus et netus et malesuada fames.</span></li>
-                <li class="mb-3 flex align-items-center"><i class="pi pi-map text-yellow-500 text-xl mr-2"></i><span class="text-gray-400 line-height-3">Orci a scelerisque purus semper eget.</span></li>
-                <li class="mb-3 flex align-items-center"><i class="pi pi-calendar text-yellow-500 text-xl mr-2"></i><span class="text-gray-400 line-height-3">Aenean sed adipiscing diam donec adipiscing tristique.</span></li>
+                <li class="mb-3 flex align-items-center"><i class="pi pi-heart text-yellow-500 text-xl mr-2"></i><span class="text-gray-400 line-height-3">Streamlined and intuitive.</span></li>
+                <li class="mb-3 flex align-items-center"><i class="pi pi-bolt text-yellow-500 text-xl mr-2"></i><span class="text-gray-400 line-height-3">Swift operations.</span></li>
+                <li class="mb-3 flex align-items-center"><i class="pi pi-cloud text-yellow-500 text-xl mr-2"></i><span class="text-gray-400 line-height-3">Reliable and consistent.</span></li>
             </ul>
-            <Button type="button" label="Claim Your Account" class="block mt-7 mb-7 lg:mb-0 p-button-rounded p-button-success p-button-lg font-medium"></Button>
+            <NuxtLink to="/signup" style="text-decoration: none;">
+                <Button type="button" label="Create Your Account" class="block mt-7 mb-7 lg:mb-0 p-button-rounded p-button-success p-button-lg font-medium"></Button>
+            </NuxtLink>
         </div>
         <div class="w-12 lg:w-6 text-center lg:text-right overflow-hidden">
             <img src="../assets/blocks/hero/hero-illustration.svg" alt="Image" class="w-full lg:w-auto">
         </div>
     </div>
 </div>
-<div class="surface-section px-4 py-8 md:px-6 lg:px-8">
-    <div class="flex justify-content-evenly flex-wrap">
-        <div class="p-3">
-            <img src="../assets/blocks/logos/peak-500.svg" alt="Image" height="50">
+<div class="bg-gray-900 px-4 py-8 md:px-6 lg:px-8">
+    <div class="text-white mb-3 font-bold text-5xl text-center">Supported Exchagnes</div>
+    <div class="text-gray-400 mb-6 line-height-3 text-xl text-center">Millions of individuals, corporations, startups and institutes work with us.</div>
+
+    <div class="flex align-items-center text-center flex-wrap">
+        <div class="flex-grow-1 p-3">
+            <img src="../assets/exchanges_logos/binance.svg" alt="Image">
         </div>
-        <div class="p-3">
-            <img src="../assets/blocks/logos/charot-500.svg" alt="Image" height="50">
+        <div class="flex-grow-1 p-3">
+            <img src="../assets/exchanges_logos/bitfinex.svg" alt="Image">
         </div>
-        <div class="p-3">
-            <img src="../assets/blocks/logos/hyper-500.svg" alt="Image" height="50">
+        <div class="flex-grow-1 p-3">
+            <img src="../assets/exchanges_logos/bitget.svg" alt="Image">
         </div>
-        <div class="p-3">
-            <img src="../assets/blocks/logos/hodly-500.svg" alt="Image" height="50">
+        <div class="flex-grow-1 p-3">
+            <img src="../assets/exchanges_logos/bybit.svg" alt="Image">
         </div>
-        <div class="p-3">
-            <img src="../assets/blocks/logos/franki-500.svg" alt="Image" height="50">
+        <div class="flex-grow-1 p-3">
+            <img src="../assets/exchanges_logos/okx.svg" alt="Image">
         </div>
     </div>
 </div>
