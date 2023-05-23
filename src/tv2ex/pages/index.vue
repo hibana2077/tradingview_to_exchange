@@ -2,7 +2,7 @@
  * @Author: hibana2077 hibana2077@gmail.com
  * @Date: 2023-05-06 16:04:00
  * @LastEditors: hibana2077 hibana2077@gmail.com
- * @LastEditTime: 2023-05-23 20:56:39
+ * @LastEditTime: 2023-05-23 21:23:04
  * @FilePath: \tradingview_to_exchange\src\tv2ex\pages\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -254,21 +254,23 @@
                         <Button type="button" class="p-button-rounded" label="Buy Now"></Button>
                     </td>
                     <td class="surface-100 p-3 text-center">
-                        <div class="text-900 text-xl font-medium mb-3">Enterprise</div>
-                        <div class="text-600 mb-3"><span class="text-3xl text-900">$12</span> /month</div>
-                        <Button type="button" class="p-button-rounded p-button-outlined" label="Contact Us"></Button>
+                        <div class="text-900 text-xl font-medium mb-3">Deploy</div>
+                        <div class="text-600 mb-3"><span class="text-3xl text-900">$0</span> /month</div>
+                        <a href="https://github.com/hibana2077/tradingview_to_exchange" style="text-decoration: none;">
+                            <Button type="button" class="p-button-rounded p-button-outlined" label="Github"></Button>
+                        </a>
                     </td>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td class="p-3 text-900 font-medium border-bottom-1 border-200">Arcu purus</td>
+                    <td class="p-3 text-900 font-medium border-bottom-1 border-200">Futures</td>
                     <td class="text-center p-medium border-bottom-1 border-200"><i class="text-green-500 pi pi-check"></i></td>
                     <td class="text-center p-medium border-bottom-1 border-200"><i class="text-green-500 pi pi-check"></i></td>
                     <td class="text-center p-medium border-bottom-1 border-200"><i class="text-green-500 pi pi-check"></i></td>
                 </tr>
                 <tr>
-                    <td class="p-3 text-900 font-medium border-bottom-1 border-200">Posuere felis</td>
+                    <td class="p-3 text-900 font-medium border-bottom-1 border-200">Spots</td>
                     <td class="text-center p-medium border-bottom-1 border-200"><i class="text-green-500 pi pi-check"></i></td>
                     <td class="text-center p-medium border-bottom-1 border-200"><i class="text-green-500 pi pi-check"></i></td>
                     <td class="text-center p-medium border-bottom-1 border-200"><i class="text-green-500 pi pi-check"></i></td>
