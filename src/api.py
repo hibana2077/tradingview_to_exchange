@@ -31,13 +31,37 @@ def record_order(order):
     mycol.insert_one(order)
 
 def user_record(user):
-    myclient = pymongo.MongoClient(args.mongo)
-    mydb = myclient["tradingview_to_exchange"]
-    mycol = mydb["users"]
-    #覆盖原有记录
-    mycol.update_one({'user_name': user['user_name']}, {'$set': user}, upsert=True)
+    '''
+    將使用者信息記錄到MongoDB數據庫。
+
+    參數:
+        user (dict): 需要存儲的使用者數據。預期包含'user_name'鍵。
+    '''
+    try:
+        # 使用提供的連接字符串初始化客戶端
+        myclient = pymongo.MongoClient(args.mongo)
+
+        # 選擇數據庫
+        mydb = myclient["tradingview_to_exchange"]
+
+        # 選擇集合（表）
+        mycol = mydb["users"]
+
+        # 在集合中更新使用者的記錄
+        # 這將更新現有的記錄或插入一個新的記錄（upsert）
+        mycol.update_one({'user_name': user['user_name']}, {'$set': user}, upsert=True)
+
+        print(f"使用者 {user['user_name']} 的記錄已成功更新。")
+
+    except Exception as e:
+        print("嘗試更新使用者記錄時發生錯誤：")
+        print(e)
+
 
 def get_user_record(user_name:str):
+    '''
+    Get user record from database
+    '''
     my_client = pymongo.MongoClient(args.mongo)
     my_db = my_client["tradingview_to_exchange"]
     my_col = my_db["users"]
@@ -98,6 +122,17 @@ def login(user: User):
         Token,expire_date = generate_Token(user.user_name)
         user_record({'user_name': user.user_name, 'Token': Token, 'expire_date': expire_date})
         return {'Token': Token, 'expire_date': expire_date}
+    else:
+        #query the database
+        data = get_user_record(user.user_name)
+        if data is None:
+            return {'error': 'User not found'}
+        elif data['password'] != user.password:
+            return {'error': 'Wrong password'}
+        else:
+            Token,expire_date = generate_Token(user.user_name)
+            user_record({'user_name': user.user_name, 'Token': Token, 'expire_date': expire_date})
+            return {'Token': Token, 'expire_date': expire_date}
     
 
 if __name__ == "__main__":
