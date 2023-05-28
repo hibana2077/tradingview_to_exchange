@@ -2,7 +2,7 @@
  * @Author: hibana2077 hibana2077@gmail.com
  * @Date: 2023-05-06 16:04:00
  * @LastEditors: hibana2077 hibana2077@gmail.com
- * @LastEditTime: 2023-05-23 21:23:04
+ * @LastEditTime: 2023-05-28 22:14:53
  * @FilePath: \tradingview_to_exchange\src\tv2ex\pages\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -12,8 +12,10 @@
     <NuxtLink :to="`/`">
         <img src="../assets/blocks/logos/hyper-light.svg" alt="Image" height="50">
     </NuxtLink>
-    <a class="cursor-pointer block lg:hidden text-gray-400"
-        v-styleclass="{ selector: '@next', enterClass: 'hidden', leaveToClass: 'hidden', hideOnOutsideClick: true }">
+    <a class="cursor-pointer block lg:hidden text-gray-400">
+        <!--
+        v-styleclass="{ selector: '@next', enterClass: 'hidden', leaveToClass: 'hidden', hideOnOutsideClick: true }"
+    -->
         <i class="pi pi-bars text-4xl"></i>
     </a>
     <div class="align-items-center flex-grow-1 justify-content-between hidden lg:flex absolute lg:static w-full bg-gray-900 left-0 top-100 px-6 lg:px-0 shadow-2 lg:shadow-none z-2">
@@ -30,7 +32,7 @@
                 </a>
             </li>
             <li>
-                <a v-ripple class="flex px-0 lg:px-5 py-3 text-gray-200 hover:text-blue-600 font-medium transition-colors transition-duration-150 p-ripple">
+                <a v-ripple class="flex px-0 lg:px-5 py-3 text-gray-200 hover:text-blue-600 font-medium transition-colors transition-duration-150 p-ripple" href="https://github.com/hibana2077/tradingview_to_exchange" style="text-decoration: none;">
                     <span>Resources</span>
                 </a>
             </li>
@@ -69,7 +71,7 @@
 </div>
 <div class="bg-gray-900 px-4 py-8 md:px-6 lg:px-8">
     <div class="text-white mb-3 font-bold text-5xl text-center">Supported Exchagnes</div>
-    <div class="text-gray-400 mb-6 line-height-3 text-xl text-center">Millions of individuals, corporations, startups and institutes work with us.</div>
+    <div class="text-gray-400 mb-6 line-height-3 text-xl text-center">Multiple options, multiple opportunities for success.</div>
 
     <div class="flex align-items-center text-center flex-wrap">
         <div class="flex-grow-1 p-3">
@@ -90,8 +92,8 @@
     </div>
 </div>
 <div class="surface-section px-4 py-8 md:px-6 lg:px-8">
-    <div class="font-bold text-900 text-3xl mb-3 text-center">Build The Way You Want</div>
-    <div class="text-700 text-center mb-3">Risus feugiat in ante metus. Lacus suspendisse faucibus interdum posuere lorem.</div>
+    <div class="font-bold text-900 text-3xl mb-3 text-center">Trade The Way You Want</div>
+    <div class="text-700 text-center mb-3">Experience the freedom and flexibility to shape your investment strategies as desired.</div>
     <div class="flex flex-wrap">
         <div class="w-full lg:w-6 xl:w-3 p-5">
             <img src="../assets/blocks/feature/feature-illustration-1.svg" alt="Image" class="w-full">
@@ -226,9 +228,9 @@
 <div class="surface-ground px-4 py-8 md:px-6 lg:px-8">
     <div class="flex flex-wrap relative overflow-hidden" style="border-radius:1rem; background:radial-gradient(100% 1126.49% at 100% 0%, rgba(106, 200, 212, 0.4) 0%, rgba(33, 33, 33, 0) 100%), #212121;">
         <div class="px-6 py-8">
-            <span class="uppercase text-cyan-500 font-bold">BE THE FIRST ONE</span>
-            <div class="text-white text-medium text-5xl mt-3 mb-5">Join the waitlist Today!</div>
-            <button v-ripple class="appearance-none p-3 bg-cyan-500 hover:bg-cyan-300 cursor-pointer font-medium gray-900 border-none p-component transition-colors transition-duration-150 p-ripple" style="border-radius: 35px">Reserve Your Username</button>
+            <span class="uppercase text-cyan-500 font-bold">DON'T HESITATE.</span>
+            <div class="text-white text-medium text-5xl mt-3 mb-5">Join Today!</div>
+            <button v-ripple class="appearance-none p-3 bg-cyan-500 hover:bg-cyan-300 cursor-pointer font-medium gray-900 border-none p-component transition-colors transition-duration-150 p-ripple" style="border-radius: 35px">Make your batter trading bot</button>
         </div>
             
         <img src="../assets/blocks/cta/cta-browser.png" alt="Image" class="static lg:absolute block mx-auto" style="height: 400px; top: -2rem; right: -1rem">
@@ -241,7 +243,7 @@
                 <tr>
                     <td class="surface-100 p-3">
                         <div class="text-3xl text-900 mb-2">Pricing</div>
-                        <span class="text-600 line-height-3">Fringilla est ullamcorper eget nulla facilisi etiam</span>
+                        <span class="text-600 line-height-3">Transparent monthly pricing, absolutely no hidden fees.</span>
                     </td>
                     <td class="surface-100 p-3 text-center">
                         <div class="text-900 text-xl font-medium mb-3">Basic</div>
@@ -264,52 +266,46 @@
             </thead>
             <tbody>
                 <tr>
-                    <td class="p-3 text-900 font-medium border-bottom-1 border-200">Futures</td>
+                    <td class="p-3 text-900 font-medium border-bottom-1 border-200">Futures Trading</td>
                     <td class="text-center p-medium border-bottom-1 border-200"><i class="text-green-500 pi pi-check"></i></td>
                     <td class="text-center p-medium border-bottom-1 border-200"><i class="text-green-500 pi pi-check"></i></td>
                     <td class="text-center p-medium border-bottom-1 border-200"><i class="text-green-500 pi pi-check"></i></td>
                 </tr>
                 <tr>
-                    <td class="p-3 text-900 font-medium border-bottom-1 border-200">Spots</td>
+                    <td class="p-3 text-900 font-medium border-bottom-1 border-200">Spots Trading</td>
                     <td class="text-center p-medium border-bottom-1 border-200"><i class="text-green-500 pi pi-check"></i></td>
                     <td class="text-center p-medium border-bottom-1 border-200"><i class="text-green-500 pi pi-check"></i></td>
                     <td class="text-center p-medium border-bottom-1 border-200"><i class="text-green-500 pi pi-check"></i></td>
                 </tr>
                 <tr>
-                    <td class="p-3 text-900 font-medium border-bottom-1 border-200">Curabitur mollis</td>
-                    <td class="text-center p-medium border-bottom-1 border-200"><i class="text-green-500 pi pi-check"></i></td>
-                    <td class="text-center p-medium border-bottom-1 border-200"><i class="text-green-500 pi pi-check"></i></td>
-                    <td class="text-center p-medium border-bottom-1 border-200"><i class="text-green-500 pi pi-check"></i></td>
+                    <td class="p-3 text-900 font-medium border-bottom-1 border-200">Support</td>
+                    <td class="text-center p-medium border-bottom-1 border-200"><span class="text-900">24/7 </span>Customer Support</td>
+                    <td class="text-center p-medium border-bottom-1 border-200"><span class="text-900">Priority</span> Customer Support</td>
+                    <td class="text-center p-medium border-bottom-1 border-200">Community Support</td>
                 </tr>
                 <tr>
-                    <td class="p-3 text-900 font-medium border-bottom-1 border-200">Vitae odio</td>
-                    <td class="text-center p-medium border-bottom-1 border-200"><i class="text-green-500 pi pi-check"></i></td>
-                    <td class="text-center p-medium border-bottom-1 border-200"><i class="text-green-500 pi pi-check"></i></td>
-                    <td class="text-center p-medium border-bottom-1 border-200"><i class="text-green-500 pi pi-check"></i></td>
+                    <td class="p-3 text-900 font-medium border-bottom-1 border-200">Market Updates</td>
+                    <td class="text-center p-medium border-bottom-1 border-200">Regular Market Updates</td>
+                    <td class="text-center p-medium border-bottom-1 border-200">Advanced Market Updates</td>
+                    <td class="text-center p-medium border-bottom-1 border-200"><i class="text-500 pi pi-times"></i></td>
                 </tr>
                 <tr>
-                    <td class="p-3 text-900 font-medium border-bottom-1 border-200">Orci, mi</td>
+                    <td class="p-3 text-900 font-medium border-bottom-1 border-200">Simulation</td>
                     <td class="text-center p-medium border-bottom-1 border-200"><i class="text-500 pi pi-times"></i></td>
                     <td class="text-center p-medium border-bottom-1 border-200"><i class="text-green-500 pi pi-check"></i></td>
-                    <td class="text-center p-medium border-bottom-1 border-200"><i class="text-green-500 pi pi-check"></i></td>
+                    <td class="text-center p-medium border-bottom-1 border-200"><i class="text-500 pi pi-times"></i></td>
                 </tr>
                 <tr>
-                    <td class="p-3 text-900 font-medium border-bottom-1 border-200">Tincidunt vulputate</td>
+                    <td class="p-3 text-900 font-medium border-bottom-1 border-200">Trading Strategies</td>
+                    <td class="text-center p-medium border-bottom-1 border-200">Basic</td>
+                    <td class="text-center p-medium border-bottom-1 border-200">Advanced</td>
                     <td class="text-center p-medium border-bottom-1 border-200"><i class="text-500 pi pi-times"></i></td>
-                    <td class="text-center p-medium border-bottom-1 border-200"><i class="text-500 pi pi-times"></i></td>
-                    <td class="text-center p-medium border-bottom-1 border-200"><i class="text-green-500 pi pi-check"></i></td>
                 </tr>
                 <tr>
-                    <td class="p-3 text-900 font-medium border-bottom-1 border-200">Quis felis</td>
-                    <td class="text-center p-medium border-bottom-1 border-200"><i class="text-500 pi pi-times"></i></td>
-                    <td class="text-center p-medium border-bottom-1 border-200"><i class="text-500 pi pi-times"></i></td>
-                    <td class="text-center p-medium border-bottom-1 border-200"><i class="text-green-500 pi pi-check"></i></td>
-                </tr>
-                <tr>
-                    <td class="p-3 text-900 font-medium border-bottom-1 border-200">Dignissim vivamus</td>
-                    <td class="text-center text-600 border-bottom-1 border-200">Up to <span class="text-900">5</span> files</td>
-                    <td class="text-center text-600 border-bottom-1 border-200">Up to <span class="text-900">10</span> files</td>
-                    <td class="text-center text-900 border-bottom-1 border-200">Unlimited</td>
+                    <td class="p-3 text-900 font-medium border-bottom-1 border-200">Bots</td>
+                    <td class="text-center text-600 border-bottom-1 border-200">Up to <span class="text-900">10</span> Bots</td>
+                    <td class="text-center text-600 border-bottom-1 border-200">Up to <span class="text-900">20</span> Bots</td>
+                    <td class="text-center text-900 border-bottom-1 border-200">Up to <span class="text-900">1</span> Bot</td>
                 </tr>
             </tbody>
         </table>
@@ -319,39 +315,18 @@
     <div class="flex align-items-start lg:align-items-center lg:justify-content-between pb-5 border-bottom-1 border-300 flex-column lg:flex-row">
         <div class="pr-0 lg:pr-8">
             <img src="../assets/blocks/logos/bastion-700.svg" alt="Image" height="50">
-            <p class="text-600 line-height-3 text-xl mb-0 mt-5">Consequat nisl vel pretium lectus quam. Scelerisque eu ultrices vitae auctor eu augue ut lectus arcu. Integer quis auctor elit sed.</p>
+            <p class="text-600 line-height-3 text-xl mb-0 mt-5">Emphasizing personalized quantitative trading approaches.</p>
         </div>
         <Button label="Get Started" class="mt-5 lg:mt-0 white-space-nowrap min-w-max"></Button>
     </div>
     <div class="py-5 border-bottom-1 border-300">
         <div class="grid">
             <div class="col-12 sm:col-6 md:col-4 lg:col-2">
-                <span class="text-900 block font-bold line-height-3 mb-3">Company</span>
-                <ul class="list-none p-0 m-0">
-                    <li class="mb-2"><a class="text-700 cursor-pointer line-height-3">About Us</a></li>
-                    <li class="mb-2"><a class="text-700 cursor-pointer line-height-3">News</a></li>
-                    <li class="mb-2"><a class="text-700 cursor-pointer line-height-3">Investor Relations</a></li>
-                    <li class="mb-2"><a class="text-700 cursor-pointer line-height-3">Careers</a></li>
-                    <li class="mb-2"><a class="text-700 cursor-pointer line-height-3">Media Kit</a></li>
-                </ul>
-            </div>
-            <div class="col-12 sm:col-6 md:col-4 lg:col-2">
                 <span class="text-900 block font-bold line-height-3 mb-3">Resources</span>
                 <ul class="list-none p-0 m-0">
                     <li class="mb-2"><a class="text-700 cursor-pointer line-height-3">Get Started</a></li>
                     <li class="mb-2"><a class="text-700 cursor-pointer line-height-3">Learn</a></li>
                     <li class="mb-2"><a class="text-700 cursor-pointer line-height-3">Case Studies</a></li>
-                </ul>
-            </div>
-            <div class="col-12 sm:col-6 md:col-4 lg:col-2">
-                <span class="text-900 block font-bold line-height-3 mb-3">Developer</span>
-                <ul class="list-none p-0 m-0">
-                    <li class="mb-2"><a class="text-700 cursor-pointer line-height-3">Courses</a></li>
-                    <li class="mb-2"><a class="text-700 cursor-pointer line-height-3">Documentation</a></li>
-                    <li class="mb-2"><a class="text-700 cursor-pointer line-height-3">API Reference</a></li>
-                    <li class="mb-2"><a class="text-700 cursor-pointer line-height-3">Status</a></li>
-                    <li class="mb-2"><a class="text-700 cursor-pointer line-height-3">Papers</a></li>
-                    <li class="mb-2"><a class="text-700 cursor-pointer line-height-3">Development Blog</a></li>
                 </ul>
             </div>
             <div class="col-12 sm:col-6 md:col-4 lg:col-2">
@@ -363,34 +338,16 @@
                     <li class="mb-2"><a class="text-700 cursor-pointer line-height-3">Blog</a></li>
                 </ul>
             </div>
-            <div class="col-12 sm:col-6 md:col-4 lg:col-2">
-                <span class="text-900 block font-bold line-height-3 mb-3">Connect</span>
-                <ul class="list-none p-0 m-0">
-                    <li class="mb-2"><a class="text-700 cursor-pointer line-height-3">Newsletters</a></li>
-                    <li class="mb-2"><a class="text-700 cursor-pointer line-height-3">Press</a></li>
-                    <li class="mb-2"><a class="text-700 cursor-pointer line-height-3">Code of Conduct</a></li>
-                    <li class="mb-2"><a class="text-700 cursor-pointer line-height-3">Security Guide</a></li>
-                    <li class="mb-2"><a class="text-700 cursor-pointer line-height-3">Bug Bounty</a></li>
-                </ul>
-            </div>
-            <div class="col-12 sm:col-6 md:col-4 lg:col-2">
-                <span class="text-900 block font-bold line-height-3 mb-3">Legal</span>
-                <ul class="list-none p-0 m-0">
-                    <li class="mb-2"><a class="text-700 cursor-pointer line-height-3">Brand Policy</a></li>
-                    <li class="mb-2"><a class="text-700 cursor-pointer line-height-3">Privacty Policy</a></li>
-                    <li class="mb-2"><a class="text-700 cursor-pointer line-height-3">Terms of Service</a></li>
-                </ul>
-            </div>
         </div>
     </div>
     <div class="flex justify-content-between align-items-center py-5">
-        <span>&copy; {{ year }} Bastion Tech</span>
+        <span>&copy; {{ year }} OneBot Tech</span>
         <div class="flex align-items-center justify-content-between">
             <a class="cursor-pointer text-500 md:ml-3 ml-2">
-                <i class="pi pi-twitter text-xl"></i>
+                <i class="pi pi-telegram text-xl"></i>
             </a>
-            <a class="cursor-pointer text-500 md:ml-3 ml-2">
-                <i class="pi pi-facebook text-xl"></i>
+            <a class="cursor-pointer text-500 md:ml-3 ml-2" href="https://discord.gg/CeGkNX7vzb" target="_blank" style="text-decoration: none;">
+                <i class="pi pi-discord text-xl"></i>
             </a>
             <a class="cursor-pointer text-500 md:ml-3 ml-2">
                 <i class="pi pi-github text-xl"></i>
