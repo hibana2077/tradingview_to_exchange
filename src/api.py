@@ -210,7 +210,10 @@ def login(user: User):
     
 @app.get("/query/profile")
 async def query_profile(token: str):
-    if check_token(token):pass
+    if check_token(token):
+        myclient = pymongo.MongoClient(args.mongo)
+        mydb = myclient["tradingview_to_exchange"]
+        mycol = mydb["profile"]
     else:return {'status': 'error', 'error': 'token error'}
     
 
@@ -231,5 +234,7 @@ if __name__ == "__main__":
     my_col.create_index("order_id", unique=True)
     my_col = my_db["failed_orders"]
     my_col.create_index("order_id", unique=True)
+    my_col = my_db["profile"]
+    my_col.create_index("user_name", unique=True)
     # 啟動API
     uvicorn.run(app, host="0.0.0.0",port=80)
