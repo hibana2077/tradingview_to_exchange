@@ -37,6 +37,46 @@ def record_order(order):
     myclient.close()
     return res.inserted_id
 
+#更新profile
+def update_profile(user_name:str,update_data:dict):
+    '''
+    更新用户的profile。
+    
+    参数:
+        user_name (str): 用户名。
+        update_data (dict): 更新的数据。
+            - profit_history (float): 收益历史记录。
+            - balance (float): 余额。
+            - open_orders_num (int): 持仓数量。
+            - win_or_lose (int): 勝負。(1:win,0:lose)
+
+    '''
+    try:
+        myclient = pymongo.MongoClient(args.mongo)
+        mydb = myclient["tradingview_to_exchange"]
+        mycol = mydb["profiles"]
+        q_data = mycol.find_one({'user_name': user_name})
+        if q_data is not None:
+            profit_history = q_data['profit_history']
+            profit_history.append(update_data['profit_history'])
+            balance = q_data['balance']
+            balance.append(update_data['balance'])
+            open_orders_num = q_data['open_orders_num']
+            open_orders_num.append(update_data['open_orders_num'])
+            win_or_lose = q_data['win_or_lose']
+            win_or_lose.append(update_data['win_or_lose'])
+            if update_data['win_or_lose']:
+                win_num = q_data['win_num']
+                win_num += 1
+            else:
+                lose_num = q_data['lose_num']
+                lose_num += 1
+
+        #not complete
+    except Exception as e:
+        print("在尝试更新用户记录时发生错误：")
+        print(e)
+
 # 用户记录
 def user_record(user):
     '''
@@ -234,7 +274,7 @@ if __name__ == "__main__":
     my_col.create_index("order_id", unique=True)
     my_col = my_db["failed_orders"]
     my_col.create_index("order_id", unique=True)
-    my_col = my_db["profile"]
+    my_col = my_db["profiles"]
     my_col.create_index("user_name", unique=True)
     # 啟動API
     uvicorn.run(app, host="0.0.0.0",port=80)
