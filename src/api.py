@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import Optional
-from ccxt import binance,okex5
+from ccxt import binance,okex5,binanceusdm,bitget,bybit
 from datetime import datetime,date,timedelta
 from hashlib import md5
 import pymongo
@@ -22,14 +22,20 @@ def record_failed_order(order):
     myclient = pymongo.MongoClient(args.mongo)
     mydb = myclient["tradingview_to_exchange"]
     mycol = mydb["failed_orders"]
-    mycol.insert_one(order)
+    res = mycol.insert_one(order)
+    print(f"订单 {res.inserted_id} 已记录。")
+    myclient.close()
+    return res.inserted_id
 
 # 记录订单
 def record_order(order):
     myclient = pymongo.MongoClient(args.mongo)
     mydb = myclient["tradingview_to_exchange"]
     mycol = mydb["orders"]
-    mycol.insert_one(order)
+    res = mycol.insert_one(order)
+    print(f"订单 {res.inserted_id} 已记录。")
+    myclient.close()
+    return res.inserted_id
 
 # 用户记录
 def user_record(user):
@@ -63,6 +69,7 @@ def get_user_record(user_name:str, mongo_connection_string:str):
         mydb = myclient["tradingview_to_exchange"]
         mycol = mydb["users"]
         data = mycol.find_one({'user_name': user_name})
+        myclient.close()
         if data is not None:
             print(f"成功获取到 {user_name} 的记录。")
         else:
@@ -104,6 +111,7 @@ def token_2_user_name(Token:str):
         mydb = myclient["tradingview_to_exchange"]
         mycol = mydb["users"]
         data = mycol.find_one({'Token': Token})
+        myclient.close()
         if data is not None:
             print(f"成功取得 {Token} 的紀錄。")
             return data['user_name']
@@ -112,6 +120,33 @@ def token_2_user_name(Token:str):
             return None
     except Exception as e:
         print("在嘗試獲取用户資料時發生錯誤：")
+        print(e)
+
+def check_token(Token:str):
+    '''
+    检查令牌是否有效。
+    
+    参数:
+        Token (str): 令牌。
+        
+    返回:
+        bool: 令牌是否有效。
+    '''
+    try:
+        myclient = pymongo.MongoClient(args.mongo)
+        mydb = myclient["tradingview_to_exchange"]
+        mycol = mydb["users"]
+        result = mycol.find_one({'Token': Token})
+        myclient.close()
+        if result is not None:
+            if datetime.strptime(result['expire_date'], "%Y-%m-%d %H:%M:%S") > datetime.now():
+                return True
+            else:
+                return False
+        else:
+            return False
+    except Exception as e:
+        print("在嘗試檢查令牌時發生錯誤：")
         print(e)
 
 # 定义数据模型
@@ -172,6 +207,11 @@ def login(user: User):
             Token,expire_date = generate_Token(user.user_name)
             user_record({'user_name': user.user_name, 'Token': Token, 'expire_date': expire_date})
             return {'Token': Token, 'expire_date': expire_date, 'status': 'success'}
+    
+@app.get("/query/profile")
+async def query_profile(token: str):
+    if check_token(token):pass
+    else:return {'status': 'error', 'error': 'token error'}
     
 
 if __name__ == "__main__":
