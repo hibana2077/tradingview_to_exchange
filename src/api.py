@@ -203,6 +203,21 @@ class Order(BaseModel):
     webhook: Optional[str] = None # 发送订单状态的webhook
     note: Optional[str] = None # 订单备注
 
+class Fast_Order(BaseModel):
+    api_key: str # 下单用户的api_key
+    secret_key: str # 下单用户的secret_key
+    phrase: Optional[str] = None # 下单用户的phrase
+    symbol: str # 购买的币种符号
+    exchange: str # 购买币种的交易所
+    side: str # 买入或卖出  
+    type: str # 市价或限价
+    quantity: float # 购买的币种数量
+    leverage: Optional[int] = None # 购买币种的杠杆
+    price: Optional[float] = None # 购买币种的价格
+    class_SF: Optional[str] = None # 现货或期货
+    webhook: Optional[str] = None # 发送订单状态的webhook
+    note: Optional[str] = None # 订单备注
+
 class front_Query(BaseModel):
     token: str # 用户令牌
     symbol: Optional[str] = None
@@ -255,7 +270,28 @@ async def query_profile(token: str):
         mydb = myclient["tradingview_to_exchange"]
         mycol = mydb["profile"]
     else:return {'status': 'error', 'error': 'token error'}
-    
+
+@app.post("/exchange/binance")
+async def binance_order(order: Order):
+    db_client = pymongo.MongoClient(args.mongo)
+    db = db_client["tradingview_to_exchange"]
+    col = db["api_setting"]
+    data = col.find_one({'user_name': order.username , 'exchange': order.exchange})
+    api_key,api_sec = data['api_key'],data['secret_key']
+    binance_ex = binance({
+        'apiKey': api_key,
+        'secret': api_sec,
+        'options': {
+            'defaultType': order.class_SF,
+        },
+        'timeout': 30000,
+    })
+    if order.type == 'market':
+        if order.side == 'buy':
+            result = binance_market_buy(api_key,api_sec,order.symbol,order.quantity)
+        elif order.side == 'sell':
+            result = binance_market_sell(api_key,api_sec,order.symbol,order.quantity)
+
 
 if __name__ == "__main__":
     # 設定資料庫
@@ -275,6 +311,8 @@ if __name__ == "__main__":
     my_col = my_db["failed_orders"]
     my_col.create_index("order_id", unique=True)
     my_col = my_db["profiles"]
+    my_col.create_index("user_name", unique=True)
+    my_col = my_db["api_setting"]
     my_col.create_index("user_name", unique=True)
     # 啟動API
     uvicorn.run(app, host="0.0.0.0",port=80)
