@@ -271,7 +271,7 @@ async def query_profile(token: str):
         mycol = mydb["profile"]
     else:return {'status': 'error', 'error': 'token error'}
 
-@app.post("/exchange/binance")
+@app.post("/exchange/binance")#it should be place spot order
 async def binance_order(order: Order):
     db_client = pymongo.MongoClient(args.mongo)
     db = db_client["tradingview_to_exchange"]
