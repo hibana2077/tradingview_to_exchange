@@ -302,13 +302,53 @@ async def binance_order(order: Order):
             result = binance_ex.create_limit_buy_order(order.symbol,order.quantity,order.price)
         elif order.side == 'sell':
             result = binance_ex.create_limit_sell_order(order.symbol,order.quantity,order.price)
-    if result['info']['status'] == 'FILLED':
+    if result['info']['status'] == 'FILLED':#need to change error status
         record_failed_order(order)
         return {'status': 'success', 'order_id': result['id']}
     else:
         record_order(order)
         return {'status': 'error', 'error': result['info']['status']}
-
+    
+@app.post("/exchange/okex5")
+async def okex5_order(order: Order):
+    db_client = pymongo.MongoClient(args.mongo)
+    db = db_client["tradingview_to_exchange"]
+    col = db["api_setting"]
+    data = col.find_one({'user_name': order.username , 'exchange': order.exchange})
+    api_key,api_sec,passphrase = data['api_key'],data['secret_key'],data['passphrase']
+    db_client.close()
+    okex5_ex = okex5({
+        'apiKey': api_key,
+        'secret': api_sec,
+        'password': passphrase,
+        'timeout': 30000,
+        'options': {
+            'defaultType': order.class_SF,
+        },
+    })
+    if order.type == 'market':
+        result = okex5_ex.create_order(
+            order.symbol,
+            order.type,
+            order.side,
+            order.quantity,
+            None,
+            params={
+                "tag": args.broker
+            }
+        )
+    elif order.type == 'limit':
+        result = okex5_ex.create_order(
+            order.symbol,
+            order.type,
+            order.side,
+            order.quantity,
+            order.price,
+            params={
+                "tag": args.broker
+            }
+        )
+    return result
 
 if __name__ == "__main__":
     # 設定資料庫
