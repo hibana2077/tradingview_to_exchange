@@ -288,9 +288,9 @@ async def binance_order(order: Order):
     })
     if order.type == 'market':
         if order.side == 'buy':
-            result = binance_market_buy(api_key,api_sec,order.symbol,order.quantity)
+            result = binance_ex.create_market_buy_order(order.symbol,order.quantity)
         elif order.side == 'sell':
-            result = binance_market_sell(api_key,api_sec,order.symbol,order.quantity)
+            result = binance_ex.create_market_sell_order(order.symbol,order.quantity)
 
 
 if __name__ == "__main__":
