@@ -268,7 +268,12 @@ async def query_profile(token: str):
     if check_token(token):
         myclient = pymongo.MongoClient(args.mongo)
         mydb = myclient["tradingview_to_exchange"]
-        mycol = mydb["profile"]
+        mycol = mydb["users"]
+        user_name = mycol.find_one({'Token': token})['user_name']
+        mycol = mydb["profiles"]
+        profile_data = mycol.find_one({'user_name': user_name})
+        myclient.close()
+        return profile_data
     else:return {'status': 'error', 'error': 'token error'}
 
 @app.post("/exchange/binance")#it should be place spot order
