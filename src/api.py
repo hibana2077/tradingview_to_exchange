@@ -278,6 +278,7 @@ async def binance_order(order: Order):
     col = db["api_setting"]
     data = col.find_one({'user_name': order.username , 'exchange': order.exchange})
     api_key,api_sec = data['api_key'],data['secret_key']
+    db_client.close()
     binance_ex = binance({
         'apiKey': api_key,
         'secret': api_sec,
@@ -291,6 +292,17 @@ async def binance_order(order: Order):
             result = binance_ex.create_market_buy_order(order.symbol,order.quantity)
         elif order.side == 'sell':
             result = binance_ex.create_market_sell_order(order.symbol,order.quantity)
+    elif order.type == 'limit':
+        if order.side == 'buy':
+            result = binance_ex.create_limit_buy_order(order.symbol,order.quantity,order.price)
+        elif order.side == 'sell':
+            result = binance_ex.create_limit_sell_order(order.symbol,order.quantity,order.price)
+    if result['info']['status'] == 'FILLED':
+        record_failed_order(order)
+        return {'status': 'success', 'order_id': result['id']}
+    else:
+        record_order(order)
+        return {'status': 'error', 'error': result['info']['status']}
 
 
 if __name__ == "__main__":
