@@ -345,7 +345,7 @@ async def okex5_order(order: Order):
             order.quantity,
             order.price,
             params={
-                "tag": args.broker
+                "tag": args.broker#broker code
             }
         )
     return result
