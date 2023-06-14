@@ -350,6 +350,34 @@ async def okex5_order(order: Order):
         )
     return result
 
+@app.post("/exchange/bybit")
+async def bybit_order(order: Order):
+    db_client = pymongo.MongoClient(args.mongo)
+    db = db_client["tradingview_to_exchange"]
+    col = db["api_setting"]
+    data = col.find_one({'user_name': order.username , 'exchange': order.exchange})
+    api_key,api_sec = data['api_key'],data['secret_key']
+    db_client.close()
+    bybit_ex = bybit({
+        'apiKey': api_key,
+        'secret': api_sec,
+        'timeout': 30000,
+        'options': {
+            'defaultType': order.class_SF,
+        },
+    })
+    if order.type == 'market':
+        result = bybit_ex.create_order(
+            order.symbol,
+            order.type,
+            order.side,
+            order.quantity,
+            None,
+            params={
+                "tag": "TV2EX"
+            }
+        )
+
 if __name__ == "__main__":
     # 設定資料庫
     my_client = pymongo.MongoClient(args.mongo)
