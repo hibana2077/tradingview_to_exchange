@@ -253,7 +253,7 @@ def login(user: User):
         user_record({'user_name': user.user_name, 'Token': Token, 'expire_date': expire_date})
         return {'Token': Token, 'expire_date': expire_date, 'status': 'success'}
     else:
-        data = get_user_record(user.user_name)
+        data = get_user_record(user.user_name, args.mongo)
         if data is None:
             return {'status': 'error', 'error': 'user not found'}
         elif data['password'] != user.password:
