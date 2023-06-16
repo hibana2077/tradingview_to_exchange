@@ -21,8 +21,24 @@ args = parser.parse_args()
 def record_failed_order(order):
     myclient = pymongo.MongoClient(args.mongo)
     mydb = myclient["tradingview_to_exchange"]
-    mycol = mydb["failed_orders"]
-    res = mycol.insert_one(order)
+    mycol = mydb["orders"]
+    rec_data = {
+        "owner": order["username"],#primary key
+        "id": md5((order["username"] + order["time"]).encode()).hexdigest(),
+        "time": order["time"], 
+        "status": "failed",
+        "detail": {
+            "symbol": order["symbol"],
+            "side": order["side"],
+            "type": order["type"],
+            "quantity": order["quantity"],
+            "price": order["price"],
+            "leverage": order["leverage"],
+            "class": order["class_SF"],
+            "note": order["note"]
+        }
+    }
+    res = mycol.insert_one(rec_data)
     print(f"订单 {res.inserted_id} 已记录。")
     myclient.close()
     return res.inserted_id
@@ -32,7 +48,23 @@ def record_order(order):
     myclient = pymongo.MongoClient(args.mongo)
     mydb = myclient["tradingview_to_exchange"]
     mycol = mydb["orders"]
-    res = mycol.insert_one(order)
+    rec_data = {
+        "owner": order["username"],#primary key
+        "id": md5((order["username"] + order["time"]).encode()).hexdigest(),
+        "time": order["time"], 
+        "status": "success",
+        "detail": {
+            "symbol": order["symbol"],
+            "side": order["side"],
+            "type": order["type"],
+            "quantity": order["quantity"],
+            "price": order["price"],
+            "leverage": order["leverage"],
+            "class": order["class_SF"],
+            "note": order["note"]
+        }
+    }
+    res = mycol.insert_one(rec_data)
     print(f"订单 {res.inserted_id} 已记录。")
     myclient.close()
     return res.inserted_id
@@ -276,6 +308,10 @@ async def query_profile(token: str):
         return profile_data
     else:return {'status': 'error', 'error': 'token error'}
 
+@app.post("/exchange/test")#this using for demo
+async def test_order(order: Order):
+    record_order(order.dict())
+
 @app.post("/exchange/binance")#it should be place spot order
 async def binance_order(order: Order):
     db_client = pymongo.MongoClient(args.mongo)
@@ -364,13 +400,30 @@ if __name__ == "__main__":
         "Token": token,
         "expire_date": expire_date,
     })
-    my_col = my_db["orders"]
-    my_col.create_index("order_id", unique=True)
-    my_col = my_db["failed_orders"]
-    my_col.create_index("order_id", unique=True)
-    my_col = my_db["profiles"]
-    my_col.create_index("user_name", unique=True)
-    my_col = my_db["api_setting"]
-    my_col.create_index("user_name", unique=True)
+
+    # Orders
+    orders_col = my_db['orders']
+    orders_col.create_index('order_id', unique=True)
+
+    # Profile
+    profile_col = my_db['profile']
+    profile_col.create_index('user_id', unique=True)
+
+    # Account (API Settings)
+    account_col = my_db['account']
+    account_col.create_index('user_id', unique=True)
+
+    # Logs
+    logs_col = my_db['logs']
+    logs_col.create_index('log_id', unique=True)
+
+    # Trade
+    trade_col = my_db['trade']
+    trade_col.create_index('trade_id', unique=True)
+
+    # Assets
+    assets_col = my_db['assets']
+    assets_col.create_index('user_id', unique=True)
+
     # 啟動API
     uvicorn.run(app, host="0.0.0.0",port=80)
