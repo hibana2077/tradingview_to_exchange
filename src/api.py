@@ -326,11 +326,12 @@ async def okex5_order(order: Order):
             'defaultType': order.class_SF,
         },
     })
+    side = 'buy' if order.side == 'buy' else 'sell'
     if order.type == 'market':
         result = okex5_ex.create_order(
             order.symbol,
-            order.type,
-            order.side,
+            'market',
+            side,
             order.quantity,
             None,
             params={
@@ -340,8 +341,8 @@ async def okex5_order(order: Order):
     elif order.type == 'limit':
         result = okex5_ex.create_order(
             order.symbol,
-            order.type,
-            order.side,
+            'limit',
+            side,
             order.quantity,
             order.price,
             params={
