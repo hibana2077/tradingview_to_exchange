@@ -144,7 +144,7 @@ def updateUser(user):
         return False
 
 # 获取用户记录
-def get_user_record(user_name:str, mongo_connection_string:str):
+def getUser(user_name:str, mongo_connection_string:str):
     '''
     从数据库中获取用户记录。
 
@@ -297,7 +297,7 @@ def read_root():
 
 @app.post("/login")
 def login(user: User):
-    data = get_user_record(user.user_name, args.mongo)
+    data = getUser(user.user_name, args.mongo)
     if data is None:
         return {'status': 'error', 'error': 'user not found'}
     elif data['password'] != user.password:
