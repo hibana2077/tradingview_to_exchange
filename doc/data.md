@@ -1,74 +1,115 @@
-<!--
- * @Author: hibana2077 hibana2077@gmaill.com
- * @Date: 2023-04-19 10:25:11
- * @LastEditors: hibana2077 hibana2077@gmail.com
- * @LastEditTime: 2023-04-24 20:13:20
- * @FilePath: /tradingview_to_exchange/doc/data.md
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
--->
+# Database Design for Auto-Trading Bot
 
-這是一個自動交易機器人的資料庫設計
+## Data Sheets
 
-## data sheet
+1. Orders
+2. Users
+3. Profile
+4. Account
+5. Logs
+6. Trade
+7. Assets
 
-- [ ] Orders
-- [ ] Users
-- [ ] Account
-
-## data sheet columns
+## Data Sheet Columns and API Functions
 
 ### Orders
 
-- [ ] Order ID
-- [ ] User ID
-- [ ] Order Time
-- [ ] Order Status
-- [ ] Order Details
+#### Columns
+
+- Order ID
+- User ID
+- Order Time
+- Order Status
+- Order Details
+
+#### API Functions
+
+- `recordFailedOrder`: Record a failed trading order.
+- `recordSuccessOrder`: Record a successful trading order.
+- `getOrder`: Get the details of a specific order.
+- `getUserOrders`: Get all orders of a specific user.
 
 ### Users
 
-- [ ] User ID
-- [ ] User Name
-- [ ] User Email
-- [ ] User Password
-- [ ] User Details
+#### Columns
+
+- User ID
+- User Name
+- User Email
+- User Password
+- User Details
+
+#### API Functions
+
+- `createUser`: Create a new user.
+- `getUser`: Get the details of a specific user.
+- `updateUser`: Update the details of a user.
+- `deleteUser`: Delete a user.
 
 ### Profile
 
-- [ ] User ID
-- [ ] Profile Details
+#### Columns
 
-### Account (api settings)
+- User ID
+- Profile Details
 
-- [ ] User ID
-- [ ] Account Details
+#### API Functions
+
+- `getProfile`: Get the profile of a specific user.
+- `updateProfile`: Update the profile of a user.
+
+### Account (API Settings)
+
+#### Columns
+
+- User ID
+- Account Details
+
+#### API Functions
+
+- `getAccountDetails`: Get the API settings of a user.
+- `updateAccountDetails`: Update the API settings of a user.
 
 ### Logs
 
-- [ ] Log ID
-- [ ] User ID
-- [ ] Log Time
-- [ ] Log Details
+#### Columns
+
+- Log ID
+- User ID
+- Log Time
+- Log Details
+
+#### API Functions
+
+- `createLog`: Record a specific event.
+- `getLog`: Get the details of a specific log.
+- `getUserLogs`: Get all logs of a specific user.
 
 ### Trade
 
-- [ ] Trade ID
-- [ ] User ID
-- [ ] Trade Time
-- [ ] Trade Symbol
-- [ ] Trade Details
+#### Columns
+
+- Trade ID
+- User ID
+- Trade Time
+- Trade Symbol
+- Trade Details
+
+#### API Functions
+
+- `createTrade`: Create a new trade.
+- `getTrade`: Get the details of a specific trade.
+- `getUserTrades`: Get all trades of a specific user.
 
 ### Assets
 
-- [ ] User ID
-- [ ] Asset Details
+#### Columns
 
-```py
-my_col = my_db["orders"]
-my_col.create_index("order_id", unique=True)
-my_col = my_db["profiles"]
-my_col.create_index("user_id", unique=True)
-my_col = my_db["api_setting"]
-my_col.create_index("user_id", unique=True)
-```
-根據以上的設計,把python code補完
+- User ID
+- Asset Details
+
+#### API Functions
+
+- `getAssets`: Get the asset details of a user.
+- `updateAssets`: Update the assets of a user.
+
