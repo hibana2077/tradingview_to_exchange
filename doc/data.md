@@ -87,22 +87,6 @@
 - `getLog`: Get the details of a specific log.
 - `getUserLogs`: Get all logs of a specific user.
 
-### Trade
-
-#### Columns
-
-- Trade ID
-- User ID
-- Trade Time
-- Trade Symbol
-- Trade Details
-
-#### API Functions
-
-- `createTrade`: Create a new trade.
-- `getTrade`: Get the details of a specific trade.
-- `getUserTrades`: Get all trades of a specific user.
-
 ### Assets
 
 #### Columns

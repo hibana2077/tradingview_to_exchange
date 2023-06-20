@@ -8,6 +8,58 @@ import pymongo
 import uvicorn
 import argparse
 
+# 定义数据模型
+class Order(BaseModel):
+    user_id: str # 下單用戶的ID，用於查詢api_key和secret_key
+    symbol: str # 購買的幣種符號
+    exchange: str # 購買幣種的交易所
+    side: str # 買入或賣出  
+    type: str # 市價或限價
+    quantity: float # 購買的幣種數量
+    leverage: Optional[int] = None # 購買幣種的杠桿
+    price: Optional[float] = None # 購買幣種的價格
+    class_SF: Optional[str] = None # 現貨或期貨
+    webhook: Optional[str] = None # 發送訂單狀態的webhook
+    note: Optional[str] = None # 訂單備注
+    order_time: str = datetime.now().strftime("%Y-%m-%d %H:%M:%S") # 訂單時間
+
+class Fast_Order(BaseModel):
+    api_key: str # 下單用戶的api_key
+    secret_key: str # 下單用戶的secret_key
+    phrase: Optional[str] = None # 下單用戶的phrase
+    symbol: str # 購買的幣種符號
+    exchange: str # 購買幣種的交易所
+    side: str # 買入或賣出  
+    type: str # 市價或限價
+    quantity: float # 購買的幣種數量
+    leverage: Optional[int] = None # 購買幣種的杠桿
+    price: Optional[float] = None # 購買幣種的價格
+    class_SF: Optional[str] = None # 現貨或期貨
+    webhook: Optional[str] = None # 發送訂單狀態的webhook
+    note: Optional[str] = None # 訂單備注
+    order_time: str = datetime.now().strftime("%Y-%m-%d %H:%M:%S") # 訂單時間
+
+class front_Query(BaseModel):
+    token: str # 用户令牌
+    symbol: Optional[str] = None
+    date: Optional[str] = None # 购买的币种日期，格式：YYYY-MM-DD
+    side: Optional[str] = None # 买入或卖出
+
+class User(BaseModel):
+    user_name: str
+    password: str
+
+class binance_api_setting(BaseModel):
+    token: str
+    api_key: str
+    secret_key: str
+
+class okex5_api_setting(BaseModel):
+    token: str
+    api_key: str
+    secret_key: str
+    passphrase: str
+
 #constants
 ALLOWED_FIELDS = ['user_name', 'user_email', 'user_password', 'user_detail']
 
@@ -21,23 +73,23 @@ parser.add_argument('--broker', type=str, default='080c0d187dcaSUDE', help='Brok
 
 args = parser.parse_args()
 
-def recordOrder(order: dict, status: str):
+def recordOrder(order: Order, status: str):
     '''
     紀錄訂單。
 
     參數:
-        order (dict): 訂單詳情。
+        order (Order): 訂單詳情。
         status (str): 訂單的狀態，可以是 'success' 或 'failed'。
     '''
     with pymongo.MongoClient(args.mongo) as myclient:
         mydb = myclient["tradingview_to_exchange"]
         mycol = mydb["orders"]
         rec_data = {
-            "user_id": order["user_id"], 
-            "order_id": md5((order["user_id"] + order["time"]).encode()).hexdigest(), #primary key
-            "order_time": order["time"], 
+            "user_id": order.user_id, 
+            "order_id": md5((order.user_id + order.order_time).encode()).hexdigest(), #primary key
+            "order_time": order.order_time, 
             "order_status": status,
-            "order_detail": order["detail"]
+            "order_detail": order.dict()
         }
         res = mycol.insert_one(rec_data)
         print(f"訂單 {res.inserted_id} 已記錄。")
@@ -93,6 +145,7 @@ def getUserOrders(user_id: str):
         print(e)
         return None
 
+
 #更新profile
 def update_profile(user_name:str,update_data:dict):
     '''
@@ -132,6 +185,7 @@ def update_profile(user_name:str,update_data:dict):
     except Exception as e:
         print("在尝试更新用户记录时发生错误：")
         print(e)
+
 
 def createUser(username: str, email: str, password: str, userid: str):
     '''
@@ -359,55 +413,6 @@ def check_token(Token:str):
         print(e)
         return False
 
-# 定义数据模型
-class Order(BaseModel):
-    username: str # 下单用户的用户名，用于查询api_key和secret_key
-    symbol: str # 购买的币种符号
-    exchange: str # 购买币种的交易所
-    side: str # 买入或卖出  
-    type: str # 市价或限价
-    quantity: float # 购买的币种数量
-    leverage: Optional[int] = None # 购买币种的杠杆
-    price: Optional[float] = None # 购买币种的价格
-    class_SF: Optional[str] = None # 现货或期货
-    webhook: Optional[str] = None # 发送订单状态的webhook
-    note: Optional[str] = None # 订单备注
-
-class Fast_Order(BaseModel):
-    api_key: str # 下单用户的api_key
-    secret_key: str # 下单用户的secret_key
-    phrase: Optional[str] = None # 下单用户的phrase
-    symbol: str # 购买的币种符号
-    exchange: str # 购买币种的交易所
-    side: str # 买入或卖出  
-    type: str # 市价或限价
-    quantity: float # 购买的币种数量
-    leverage: Optional[int] = None # 购买币种的杠杆
-    price: Optional[float] = None # 购买币种的价格
-    class_SF: Optional[str] = None # 现货或期货
-    webhook: Optional[str] = None # 发送订单状态的webhook
-    note: Optional[str] = None # 订单备注
-
-class front_Query(BaseModel):
-    token: str # 用户令牌
-    symbol: Optional[str] = None
-    date: Optional[str] = None # 购买的币种日期，格式：YYYY-MM-DD
-    side: Optional[str] = None # 买入或卖出
-
-class User(BaseModel):
-    user_name: str
-    password: str
-
-class binance_api_setting(BaseModel):
-    token: str
-    api_key: str
-    secret_key: str
-
-class okex5_api_setting(BaseModel):
-    token: str
-    api_key: str
-    secret_key: str
-    passphrase: str
 
 # 创建FastAPI应用实例
 app = FastAPI()
@@ -449,9 +454,8 @@ async def query_profile(token: str):
 
 @app.post("/exchange/test")#this using for demo
 async def test_order(order: Order):
-    data = {
-
-    recordOrder(order,'success')
+    order_id = recordOrder(order=order, status='success')
+    return {'status': 'success', 'order_id': order_id}
 
 @app.post("/exchange/binance")#it should be place spot order
 async def binance_order(order: Order):
