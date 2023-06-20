@@ -113,7 +113,7 @@ def update_profile(user_name:str,update_data:dict):
         print("在尝试更新用户记录时发生错误：")
         print(e)
 
-def createUser(username: str, email: str, password: str):
+def createUser(username: str, email: str, password: str, userid: str):
     '''
     在資料庫中創建一個新的用戶。
 
@@ -121,6 +121,7 @@ def createUser(username: str, email: str, password: str):
         username (str): 用戶名
         email (str): 用戶的電子郵件
         password (str): 用戶的密碼
+        userid (str): 用戶的ID
     '''
     try:
         # 創建並編碼JWT令牌
@@ -134,6 +135,7 @@ def createUser(username: str, email: str, password: str):
 
         # 創建用戶字典
         user = {
+            'user_id': userid,
             'user_name': username,
             'user_email': email,
             'user_password': password,
@@ -143,6 +145,17 @@ def createUser(username: str, email: str, password: str):
         with pymongo.MongoClient(args.mongo) as myclient:
             mydb = myclient["tradingview_to_exchange"]
             mycol = mydb["users"]
+
+            # 檢查用戶名，電子郵件和用戶 ID 是否已經存在於數據庫中
+            if mycol.find_one({'user_name': username}):
+                print(f"用戶名 {username} 已存在。")
+                return False
+            if mycol.find_one({'user_email': email}):
+                print(f"電子郵件 {email} 已存在。")
+                return False
+            if mycol.find_one({'user_id': userid}):
+                print(f"用戶 ID {userid} 已存在。")
+                return False
 
             # 插入用戶資訊到資料庫
             mycol.insert_one(user)
@@ -215,16 +228,15 @@ def updateUser(username:str, user:dict):
         print(e)
         return False
     
-def deleteUser(username: str, mongo_connection_string: str):
+def deleteUser(username: str):
     '''
     從數據庫中刪除用戶記錄。
 
     參數:
         username (str): 用戶名。
-        mongo_connection_string (str): MongoDB連接字符串。
     '''
     try:
-        with pymongo.MongoClient(mongo_connection_string) as myclient:
+        with pymongo.MongoClient(args.mongo) as myclient:
             mydb = myclient["tradingview_to_exchange"]
             mycol = mydb["users"]
 
