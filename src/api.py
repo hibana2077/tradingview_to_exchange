@@ -154,6 +154,30 @@ def createUser(username: str, email: str, password: str):
         print(e)
         return False
 
+def getUser(user_name: str, mongo_connection_string: str):
+    '''
+    從數據庫中獲取用戶記錄。
+
+    參數:
+        user_name (str): 用戶名。
+        mongo_connection_string (str): MongoDB連接字符串。
+    '''
+    try:
+        with pymongo.MongoClient(mongo_connection_string) as myclient:
+            mydb = myclient["tradingview_to_exchange"]
+            mycol = mydb["users"]
+            data = mycol.find_one({'user_name': user_name})
+
+        if data is not None:
+            print(f"成功獲取到 {user_name} 的記錄。")
+        else:
+            print(f"未找到 {user_name} 的記錄。")
+            
+        return data
+    except Exception as e:
+        print("在嘗試獲取用戶記錄時發生錯誤：")
+        print(e)
+        return None
 
 def updateUser(username:str, user:dict):
     '''
@@ -162,6 +186,14 @@ def updateUser(username:str, user:dict):
     參數:
         username (str): 用戶名
         user (dict): 用戶信息字典，預期包含允許的字段鍵。
+
+    DB中的用戶信息字典包含以下字段鍵：
+        - user_name (str): 用戶名
+        - user_email (str): 用戶的電子郵件
+        - user_password (str): 用戶的密碼
+        - user_detail (dict): 用戶詳細信息字典，包含以下字段鍵：
+            - token (str): JWT令牌
+            - expire_date (str): JWT令牌的到期日期
     '''
     try:
         with pymongo.MongoClient(args.mongo) as myclient:
@@ -182,31 +214,6 @@ def updateUser(username:str, user:dict):
         print("在嘗試更新用戶記錄時發生錯誤：")
         print(e)
         return False
-
-# 获取用户记录
-def getUser(user_name:str, mongo_connection_string:str):
-    '''
-    从数据库中获取用户记录。
-
-    参数:
-        user_name (str): 用户名。
-        mongo_connection_string (str): MongoDB连接字符串。
-    '''
-    try:
-        myclient = pymongo.MongoClient(mongo_connection_string)
-        mydb = myclient["tradingview_to_exchange"]
-        mycol = mydb["users"]
-        data = mycol.find_one({'user_name': user_name})
-        return_data = data
-        myclient.close()
-        if data is not None:
-            print(f"成功获取到 {user_name} 的记录。")
-        else:
-            print(f"未找到 {user_name} 的记录。")
-        return return_data
-    except Exception as e:
-        print("在尝试获取用户记录时发生错误：")
-        print(e)
 
 # 生成令牌
 def generate_Token(user_name: str)->dict:
@@ -236,7 +243,7 @@ def generate_Token(user_name: str)->dict:
     except Exception as e:
         print("在嘗試生成令牌時發生錯誤：")
         print(e)
-        return None
+        return {'Token': None, 'Expire_Date': None}
 
 def token_2_user_name(Token:str):
     '''
@@ -357,11 +364,13 @@ def login(user: User):
         return {'status': 'error', 'error': 'password error'}
     else:
         Token,expire_date = generate_Token(user.user_name)
-        updateUser({
-            'user_name': user.user_name,
-            'Token': Token,
-            'expire_date': expire_date
-        })
+        update_dict = {
+            "user_detail": {
+                "Token": Token,
+                "expire_date": expire_date
+            }
+        }
+        updateUser(username=user.user_name, user=update_dict)
         return {'Token': Token, 'expire_date': expire_date, 'status': 'success'}
     
 @app.get("/query/profile")
