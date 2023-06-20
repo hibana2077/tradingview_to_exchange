@@ -116,3 +116,12 @@
 - `createAssets`: Create the assets of a user.
 - `deleteAssets`: Delete the assets of a user.
 
+## Open API ports
+
+- [ ] /
+- [ ] login
+- [ ] register
+- [ ] api/setting
+
+---
+幫我想Open API ports還需要哪些function
