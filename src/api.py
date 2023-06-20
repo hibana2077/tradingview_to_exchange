@@ -113,6 +113,48 @@ def update_profile(user_name:str,update_data:dict):
         print("在尝试更新用户记录时发生错误：")
         print(e)
 
+def createUser(username: str, email: str, password: str):
+    '''
+    在資料庫中創建一個新的用戶。
+
+    參數:
+        username (str): 用戶名
+        email (str): 用戶的電子郵件
+        password (str): 用戶的密碼
+    '''
+    try:
+        # 創建並編碼JWT令牌
+        token, expiry_time = generate_Token(username)
+
+        # 創建用戶詳細信息字典
+        user_details = {
+            'token': token,
+            'expire_date': expiry_time
+        }
+
+        # 創建用戶字典
+        user = {
+            'user_name': username,
+            'user_email': email,
+            'user_password': password,
+            'user_detail': user_details
+        }
+
+        with pymongo.MongoClient(args.mongo) as myclient:
+            mydb = myclient["tradingview_to_exchange"]
+            mycol = mydb["users"]
+
+            # 插入用戶資訊到資料庫
+            mycol.insert_one(user)
+
+        print(f"用戶 {username} 的記錄已成功創建。")
+        return True
+    except Exception as e:
+        print("在嘗試創建用戶記錄時發生錯誤：")
+        print(e)
+        return False
+
+
 def updateUser(username:str, user:dict):
     '''
     將用戶信息記錄到數據庫。
@@ -167,21 +209,34 @@ def getUser(user_name:str, mongo_connection_string:str):
         print(e)
 
 # 生成令牌
-def generate_Token(user_name:str):
+def generate_Token(user_name: str):
     '''
-    根据用户名和当前日期时间生成MD5令牌。
+    根據用戶名和當前日期時間生成MD5令牌。
 
-    参数:
-        user_name (str): 用户名。
+    參數:
+        user_name (str): 用戶名。
 
     返回:
-        Token (str): 生成的MD5令牌。
-        expire_date (str): 令牌的到期日期（从当前时间开始计算的5天后）。
+        token_expire_info (dict): 包含生成的MD5令牌和到期日期的字典。
     '''
-    date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    Token = md5((user_name + date).encode()).hexdigest()
-    expire_date = datetime.now() + timedelta(days=5)
-    return (Token, expire_date.strftime("%Y-%m-%d %H:%M:%S"))
+    try:
+        # Generate token using MD5 hashing
+        date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        Token = md5((user_name + date).encode()).hexdigest()
+
+        # Set token expiry date to 5 days from now
+        expire_date = datetime.now() + timedelta(days=5)
+
+        token_expire_info = {
+            'Token': Token,
+            'Expire_Date': expire_date.strftime("%Y-%m-%d %H:%M:%S")
+        }
+
+        return token_expire_info
+    except Exception as e:
+        print("在嘗試生成令牌時發生錯誤：")
+        print(e)
+        return None
 
 def token_2_user_name(Token:str):
     '''
