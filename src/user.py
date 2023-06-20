@@ -3,7 +3,6 @@ import requests
 import streamlit as st
 import pandas as pd
 import json
-import openai
 from random import randint
 from plotly import graph_objects as go
 from plotly import express as px

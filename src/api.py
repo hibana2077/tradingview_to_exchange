@@ -3,29 +3,16 @@ from fastapi import HTTPException, status
 from pydantic import BaseModel
 from bson.objectid import ObjectId
 from typing import Optional
-from ccxt import binance,okex5,binanceusdm,bitget,bybit
 from datetime import datetime,date,timedelta
 from hashlib import md5
 import pymongo
 import uvicorn
 import argparse
+import ccxt
 
 # 定义数据模型
 class Order(BaseModel):
-    user_id: str # 下單用戶的ID，用於查詢api_key和secret_key
-    symbol: str # 購買的幣種符號
-    exchange: str # 購買幣種的交易所
-    side: str # 買入或賣出  
-    type: str # 市價或限價
-    quantity: float # 購買的幣種數量
-    leverage: Optional[int] = None # 購買幣種的杠桿
-    price: Optional[float] = None # 購買幣種的價格
-    class_SF: Optional[str] = None # 現貨或期貨
-    webhook: Optional[str] = None # 發送訂單狀態的webhook
-    note: Optional[str] = None # 訂單備注
-    order_time: str = datetime.now().strftime("%Y-%m-%d %H:%M:%S") # 訂單時間
-
-class Fast_Order(BaseModel):
+    user_id: str # 下單用戶的ID
     api_key: str # 下單用戶的api_key
     secret_key: str # 下單用戶的secret_key
     phrase: Optional[str] = None # 下單用戶的phrase
@@ -34,6 +21,8 @@ class Fast_Order(BaseModel):
     side: str # 買入或賣出  
     type: str # 市價或限價
     quantity: float # 購買的幣種數量
+    prev_position: float # 上一筆訂單的持倉
+    now_position: float # 當前訂單的持倉
     leverage: Optional[int] = None # 購買幣種的杠桿
     price: Optional[float] = None # 購買幣種的價格
     class_SF: Optional[str] = None # 現貨或期貨
@@ -64,6 +53,9 @@ class Api_settings(BaseModel):
     phrase: Optional[str] = None
     exchange: str
 
+class Api_profile(BaseModel):
+    token: str
+
 #constants
 ALLOWED_FIELDS = ['user_name', 'user_email', 'user_password', 'user_detail']
 
@@ -75,9 +67,26 @@ parser.add_argument('--password', type=str, default='admin', help='APP password'
 parser.add_argument('--user_email', type=str,default="", help='APP user email')
 parser.add_argument('--broker', type=str, default='080c0d187dcaSUDE', help='Broker ID')
 
+#python api.py --mongo mongodb://localhost:27017/ --user_name admin --password admin --user_email "" --broker 080c0d187dcaSUDE
+
 args = parser.parse_args()
 
-def recordOrder(order: Order, status: str):
+def setup_ccxt_exchange(user_id: str, exchange: str, class_name: str):
+    api_setting = getAccountDetails(user_id=user_id)
+    api_key = api_setting[exchange]["api_key"]
+    api_sec = api_setting[exchange]["api_sec"]
+    api_pass = api_setting[exchange]["api_pass"]
+    return getattr(ccxt, exchange)({
+        'apiKey': api_key,
+        'secret': api_sec,
+        'password': api_pass,
+        'enableRateLimit': True,
+        'options': {
+            'defaultType': class_name
+        }
+    })
+
+def recordOrder(order: Order, status: str, write_data:dict):
     '''
     紀錄訂單。
 
@@ -93,7 +102,7 @@ def recordOrder(order: Order, status: str):
             "order_id": md5((order.user_id + order.order_time).encode()).hexdigest(), #primary key
             "order_time": order.order_time, 
             "order_status": status,
-            "order_detail": order.dict()
+            "order_detail": write_data
         }
         res = mycol.insert_one(rec_data)
         print(f"訂單 {res.inserted_id} 已記錄。")
@@ -414,9 +423,6 @@ def createUser(username: str, email: str, password: str, userid: str):
             mycol = mydb["users"]
 
             # 檢查用戶名，電子郵件和用戶 ID 是否已經存在於數據庫中
-            if mycol.find_one({'user_name': username}):
-                print(f"用戶名 {username} 已存在。")
-                return False
             if mycol.find_one({'user_email': email}):
                 print(f"電子郵件 {email} 已存在。")
                 return False
@@ -486,6 +492,8 @@ def updateUser(username:str, user:dict):
                 return False
             
             update_data = {field: user.get(field) for field in ALLOWED_FIELDS if field in user}
+            print(f"更新用戶 {username} 的記錄。")
+            print(update_data)
             mycol.update_one({'user_name': username}, {'$set': update_data}, upsert=True)
             
         print(f"用戶 {username} 的記錄已成功更新。")
@@ -577,6 +585,33 @@ def token_2_user_name(Token:str)->str:
         print("在嘗試獲取用户資料時發生錯誤：")
         print(e)
         return ""
+    
+def token_2_user_id(Token:str)->str:
+    '''
+    根据令牌获取用户ID。
+
+    参数:
+        Token (str): 令牌。
+
+    返回:
+        user_id (str): 用户ID。
+    '''
+    try:
+        with pymongo.MongoClient(args.mongo) as myclient:
+            mydb = myclient["tradingview_to_exchange"]
+            mycol = mydb["users"]
+            data = mycol.find_one({'user_detail.token': Token})
+
+        if data is not None:
+            print(f"成功取得 {Token} 的紀錄。")
+            return data['user_id']
+        else:
+            print(f"未找到 {Token} 的紀錄。")
+            return ""
+    except Exception as e:
+        print("在嘗試獲取用户資料時發生錯誤：")
+        print(e)
+        return ""
 
 def check_token(Token:str):
     '''
@@ -625,10 +660,10 @@ def getAccountDetails(user_id: str):
                 return account_details['account_details']
             else:
                 print(f"找不到用戶 {user_id} 的API設置。")
-                return None
+                return {}
     except Exception as e:
         print(f"在嘗試獲取用戶API設置時發生錯誤： {e}")
-        return None
+        return {}
 
 
 def updateAccountDetails(user_id: str, account_details: dict):
@@ -765,42 +800,99 @@ def getUserLogs(user_id: str):
         print(f"在嘗試獲取用戶日誌時發生錯誤： {e}")
         return []
 
+def getPositions(user_id: str,exchange:str,class_name:str):
+    '''
+    獲取特定用戶的所有持倉。
+
+    參數:
+        user_id (str): 用戶ID。
+        exchange (str): 交易所名稱。
+        class_name (str): 類別名稱。
+
+    返回:
+        list: 包含所有持倉的列表。若未找到，返回空列表。
+    '''
+    try:
+        with pymongo.MongoClient(args.mongo) as myclient:
+            mydb = myclient["tradingview_to_exchange"]
+            mycol = mydb["positions"]
+            res = mycol.find_one({"user_id": user_id}, {"position_details": 1})
+            return res.get("position_details", {}).get(exchange, {}).get(class_name, [])
+    except Exception as e:
+        print(f"在嘗試獲取用戶持倉時發生錯誤： {e}")
+        return []
+
+def updatePosition(user_id: str,exchange: str,class_name: str):
+    '''
+    更新特定用戶的持倉。
+    
+    參數:
+        user_id (str): 用戶ID。
+        exchange (str): 交易所名稱。
+        
+    返回:
+        bool: 更新成功返回 True，否則返回 False。
+    '''
+    try:
+        with pymongo.MongoClient(args.mongo) as myclient:
+            mydb = myclient["tradingview_to_exchange"]
+            mycol = mydb["positions"]
+            api_setting = getAccountDetails(user_id=user_id)
+            api_key = api_setting[exchange]["api_key"]
+            api_sec = api_setting[exchange]["api_sec"]
+            api_pass = api_setting[exchange]["api_pass"]
+            ccxt_exchange = getattr(ccxt, exchange)({
+                'apiKey': api_key,
+                'secret': api_sec,
+                'password': api_pass,
+                'enableRateLimit': True,
+                'options': {
+                    'defaultType': class_name
+                }
+            })
+            positions = ccxt_exchange.fetch_positions()#list
+            mycol.update_one({'user_id': user_id}, {'$set': {f'position_details.{exchange}.{class_name}': positions}})
+            return True
+    except Exception as e:
+        print(f"在嘗試更新用戶持倉時發生錯誤： {e}")
+        return False
 
 # 创建FastAPI应用实例
 app = FastAPI()
 
 @app.get("/")
 def read_root():
-    return {"Hello": "World"}
+    return {"Hello": "World","auto docs":"http://localhost:443/docs"}
 
-@app.post("/login")
+@app.post("/login")#Verify
 async def login(user: User):
     data = getUser(user_name=user.user_name, mongo_connection_string=args.mongo)
     if data is None:
         return {'status': 'error', 'error': 'user not found'}
-    elif data['password'] != user.password:
+    elif data['user_password'] != user.password:
         return {'status': 'error', 'error': 'password incorrect'}
     else:
-        token, expire_date = generate_Token(user_name=user.user_name)
+        token, expire_date = generate_Token(user_name=user.user_name).values()
+        print(token, expire_date)
         update_dict = {
             "user_detail": {
                 "token": token,
-                "expire_date": expire_date.strftime("%Y-%m-%d %H:%M:%S")
+                "expire_date": expire_date
             }
         }
         updateUser(username=user.user_name, user=update_dict)
-        return {'token': token, 'expire_date': expire_date.strftime("%Y-%m-%d %H:%M:%S"), 'status': 'success'}
+        return {'token': token, 'expire_date': expire_date, 'status': 'success'}
     
-@app.post("/register")
+@app.post("/register")#Verify
 async def register(user: RegisterUser):
     existing_user = getUser(user_name=user.name,mongo_connection_string=args.mongo)
     if existing_user is not None:
         return {'status': 'error', 'error': 'username already exists'}
     else:
-        createUser(username=user.name, password=user.password,userid=user.id,email=user.email)
-        return {'status': 'success'}
+        if createUser(username=user.name, password=user.password,userid=user.id,email=user.email):return {'status': 'success'}
+        else:return {'status': 'error', 'error': 'register failed'}
 
-@app.post("/api/setting")
+@app.post("/api/setting/api_setting")
 async def api_setting(setting: Api_settings):
     if not check_token(Token=setting.token):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, 
@@ -817,6 +909,25 @@ async def api_setting(setting: Api_settings):
     updateUser(username=user_id, user=update_data)
     return {'status': 'success'}
 
+@app.post("/api/profile/getdata")
+async def api_profile(profile: Api_profile):
+    if not check_token(Token=profile.token):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, 
+                            detail='token incorrect or expired')
+
+    user_name = token_2_user_name(Token=profile.token)
+    #get profile data
+    data = getProfile(user_name=user_name)
+    if data is None:
+        return {'status': 'error', 'error': 'profile not found'}
+    else:
+        return {'status': 'success', 'data': data}
+
+@app.post("/api/order/create")
+async def api_order_create(order: Order):
+    #under maintenance
+    return {'status': 'success'}
+
 def create_collection_and_index(db, collection_name, index_field):
     collection = db[collection_name]
     collection.create_index(index_field, unique=True)
@@ -825,36 +936,45 @@ def create_collection_and_index(db, collection_name, index_field):
 if __name__ == "__main__":
     # Initialize database
     my_client = pymongo.MongoClient(args.mongo)
-    my_db = my_client["tradingview_to_exchange"]
+    
+    #check if database exist
+    dblist = my_client.list_database_names()
+    if "tradingview_to_exchange" in dblist:
+        print("The database exists.")
+    else:
+        my_db = my_client["tradingview_to_exchange"]
 
-    # Users
-    token,expire_date = generate_Token(args.user_name)
-    my_col = create_collection_and_index(my_db, "users", "user_name")
-    my_col.insert_one({
-        "user_id": args.user_name,
-        "user_name": args.user_name,
-        "user_password": args.password,
-        "user_email": args.email,
-        "user_detail": {
-            "token": token,
-            "expire_date": expire_date
-        }
-    })
+        # Users
+        token,expire_date = generate_Token(args.user_name)
+        my_col = create_collection_and_index(my_db, "users", "user_name")
+        my_col.insert_one({
+            "user_id": args.user_name,
+            "user_name": args.user_name,
+            "user_password": args.password,
+            "user_email": args.user_email,
+            "user_detail": {
+                "token": token,
+                "expire_date": expire_date
+            }
+        })
 
-    # Orders
-    orders_col = create_collection_and_index(my_db, "orders", "order_id")
+        # Orders
+        orders_col = create_collection_and_index(my_db, "orders", "order_id")
 
-    # Profile
-    profile_col = create_collection_and_index(my_db, "profiles", "user_id")
+        # Profile
+        profile_col = create_collection_and_index(my_db, "profiles", "user_id")
 
-    # Account (API Settings)
-    account_col = create_collection_and_index(my_db, "account", "user_id")
+        # Account (API Settings)
+        account_col = create_collection_and_index(my_db, "account", "user_id")
 
-    # Logs
-    logs_col = create_collection_and_index(my_db, "logs", "log_id")
+        # Logs
+        logs_col = create_collection_and_index(my_db, "logs", "log_id")
 
-    # Assets
-    assets_col = create_collection_and_index(my_db, "assets", "user_id")
+        # Assets
+        assets_col = create_collection_and_index(my_db, "assets", "user_id")
+
+        #Positions
+        positions_col = create_collection_and_index(my_db, "positions", "user_id")
 
     #exit database
     my_client.close()

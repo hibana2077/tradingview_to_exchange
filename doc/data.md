@@ -8,6 +8,7 @@
 4. Account
 5. Logs
 6. Assets
+7. Positions
 
 ## Data Sheet Columns and API Functions
 
@@ -22,6 +23,15 @@
 - Order Time
 - Order Status
 - Order Details
+    - Order Type
+    - Order Side
+    - Order Price
+    - Order Quantity
+    - Order Leverage
+    - Order Class (Spot,Futures,Swap,etc.)
+    - Order Symbol
+    - Order note
+    - Order result
 
 #### API Functions
 
@@ -59,6 +69,11 @@
 
 - User ID
 - Profile Details
+    - profit_history:list
+    - balance:list
+    - open_orders_num:list
+    - win_num:int
+    - lose_num:int
 
 #### API Functions
 
@@ -75,6 +90,10 @@
 
 - User ID
 - Account Details
+    - exchange
+        - api_key
+        - api_sec
+        - api_pass
 
 #### API Functions
 
@@ -116,12 +135,35 @@
 - `createAssets`: Create the assets of a user.
 - `deleteAssets`: Delete the assets of a user.
 
+### Positions
+
+- [X] Done
+
+#### Columns
+
+- User ID
+- Position Details
+
+#### API Functions
+
+- `getPositions`: Get the position details of a user.
+- `updatePositions`: Update the positions of a user.
+- `createPositions`: Create the positions of a user.
+- `deletePositions`: Delete the positions of a user.
+
 ## Open API ports
 
-- [ ] /
-- [ ] login
-- [ ] register
+- [X] /
+- [X] login
+- [X] register
+- [ ] api/profile
+    - [X] api/profile/getdata
 - [ ] api/setting
-
----
-幫我想Open API ports還需要哪些function
+    - [X] api/setting/api_setting
+- [ ] api/order
+    - [ ] api/order/create
+    - [ ] api/order/history
+    - [ ] api/order/alive
+- [ ] api/asset
+- [ ] api/log
+- [ ] api/fastorder
