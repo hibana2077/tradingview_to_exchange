@@ -134,7 +134,7 @@ def user_record(user):
                 "expire_date": user['user_detail']['expire_date'],
             }
         }
-        mycol.update_one({'user_name': user['user_name']}, {'$set': user}, upsert=True)
+        mycol.update_one({'user_name': user['user_name']}, {'$set': update_data}, upsert=True)
         print(f"用户 {user['user_name']} 的记录已成功更新。")
         myclient.close()
         return True
