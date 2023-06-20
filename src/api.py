@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+from bson.objectid import ObjectId
 from typing import Optional
 from ccxt import binance,okex5,binanceusdm,bitget,bybit
 from datetime import datetime,date,timedelta
@@ -47,6 +48,12 @@ class front_Query(BaseModel):
 
 class User(BaseModel):
     user_name: str
+    password: str
+
+class RegisterUser(BaseModel):
+    id: str
+    name: str
+    email: str
     password: str
 
 class binance_api_setting(BaseModel):
@@ -146,45 +153,234 @@ def getUserOrders(user_id: str):
         return None
 
 
-#更新profile
-def update_profile(user_name:str,update_data:dict):
+def updateProfile(user_name: str, update_data: dict):
     '''
-    更新用户的profile。
-    
-    参数:
-        user_name (str): 用户名。
-        update_data (dict): 更新的数据。
-            - profit_history (float): 收益历史记录。
-            - balance (float): 余额。
-            - open_orders_num (int): 持仓数量。
-            - win_or_lose (int): 勝負。(1:win,0:lose)
+    更新用戶的profile。
 
+    參數:
+        user_name (str): 用戶名。
+        update_data (dict): 更新的數據。
+            - profit_history (float): 收益歷史記錄。
+            - balance (float): 余額。
+            - open_orders_num (int): 持倉數量。
+            - win_or_lose (int): 勝負。(1:win,0:lose)
     '''
     try:
-        myclient = pymongo.MongoClient(args.mongo)
-        mydb = myclient["tradingview_to_exchange"]
-        mycol = mydb["profiles"]
-        q_data = mycol.find_one({'user_name': user_name})
-        if q_data is not None:
-            profit_history = q_data['profit_history']
-            profit_history.append(update_data['profit_history'])
-            balance = q_data['balance']
-            balance.append(update_data['balance'])
-            open_orders_num = q_data['open_orders_num']
-            open_orders_num.append(update_data['open_orders_num'])
-            win_or_lose = q_data['win_or_lose']
-            win_or_lose.append(update_data['win_or_lose'])
-            if update_data['win_or_lose']:
-                win_num = q_data['win_num']
-                win_num += 1
-            else:
-                lose_num = q_data['lose_num']
-                lose_num += 1
+        with pymongo.MongoClient(args.mongo) as myclient:
+            mydb = myclient["tradingview_to_exchange"]
+            mycol = mydb["profiles"]
 
-        #not complete
+            win_or_lose = update_data['win_or_lose']
+            win_num_inc = 1 if win_or_lose else 0
+            lose_num_inc = 1 if not win_or_lose else 0
+
+            update = {
+                "$push": {
+                    "profile_details.profit_history": update_data['profit_history'],
+                    "profile_details.balance": update_data['balance'],
+                    "profile_details.open_orders_num": update_data['open_orders_num'],
+                },
+                "$inc": {
+                    "profile_details.win_num": win_num_inc,
+                    "profile_details.lose_num": lose_num_inc
+                }
+            }
+
+            res = mycol.update_one({"user_name": user_name}, update)
+
+            if res.matched_count > 0:
+                print(f"用戶 {user_name} 的記錄已更新。")
+            else:
+                print(f"未找到 {user_name} 的記錄。")
     except Exception as e:
-        print("在尝试更新用户记录时发生错误：")
+        print("在嘗試更新用戶記錄時發生錯誤：")
         print(e)
+
+
+def getProfile(user_name:str):
+    '''
+    获取指定用户的个人资料。
+
+    参数:
+        user_name (str): 用户名。
+
+    返回:
+        dict: 用户的个人资料，如果找不到该用户则返回 None。
+    '''
+    try:
+        with pymongo.MongoClient(args.mongo) as myclient:
+            mydb = myclient["tradingview_to_exchange"]
+            mycol = mydb["profiles"]
+            profile = mycol.find_one({'user_name': user_name})
+
+            if profile is not None:
+                print(f"成功取得用户 {user_name} 的资料。")
+            else:
+                print(f"未找到用户 {user_name} 的资料。")
+                
+            return profile
+
+    except Exception as e:
+        print("在尝试获取用户资料时发生错误：")
+        print(e)
+        return None
+
+def createProfile(user_name:str, profile_details:dict):
+    '''
+    為用戶創建一個個人資料。
+
+    參數:
+        user_name (str): 用戶名。
+        profile_details (dict): 用戶資料詳細信息。
+
+    返回:
+        bool: 成功創建返回 True，否則返回 False。
+    '''
+    try:
+        with pymongo.MongoClient(args.mongo) as myclient:
+            mydb = myclient["tradingview_to_exchange"]
+            mycol = mydb["profiles"]
+            
+            profile_details['user_name'] = user_name
+            mycol.insert_one(profile_details)
+
+            print(f"用戶 {user_name} 的個人資料已成功創建。")
+            return True
+
+    except Exception as e:
+        print("在嘗試創建用戶個人資料時發生錯誤：")
+        print(e)
+        return False
+
+
+def deleteProfile(user_name:str):
+    '''
+    刪除用戶的個人資料。
+
+    參數:
+        user_name (str): 用戶名。
+
+    返回:
+        bool: 成功刪除返回 True，否則返回 False。
+    '''
+    try:
+        with pymongo.MongoClient(args.mongo) as myclient:
+            mydb = myclient["tradingview_to_exchange"]
+            mycol = mydb["profiles"]
+            
+            mycol.delete_one({'user_name': user_name})
+
+            print(f"用戶 {user_name} 的個人資料已成功刪除。")
+            return True
+
+    except Exception as e:
+        print("在嘗試刪除用戶個人資料時發生錯誤：")
+        print(e)
+        return False
+
+def getAssets(user_id: str):
+    '''
+    獲取用戶的資產詳情。
+
+    參數:
+        user_id (str): 用戶ID。
+
+    返回:
+        dict: 用戶的資產詳情，如果找不到用戶則返回 None。
+    '''
+    try:
+        with pymongo.MongoClient(args.mongo) as myclient:
+            mydb = myclient["tradingview_to_exchange"]
+            mycol = mydb["assets"]
+
+            user_assets = mycol.find_one({'user_id': user_id})
+            if user_assets:
+                return user_assets['asset_details']
+            else:
+                return None
+    except Exception as e:
+        print(f"在嘗試獲取用戶資產詳情時發生錯誤： {e}")
+        return None
+
+
+def updateAssets(user_id: str, increase_dict: dict, decrease_dict: dict):
+    '''
+    更新用戶的資產。
+
+    參數:
+        user_id (str): 用戶ID。
+        increase_dict (dict): 資產增加的量。
+        decrease_dict (dict): 資產減少的量。
+
+    返回:
+        bool: 更新成功返回 True，否則返回 False。
+    '''
+    try:
+        with pymongo.MongoClient(args.mongo) as myclient:
+            mydb = myclient["tradingview_to_exchange"]
+            mycol = mydb["assets"]
+
+            user_assets = mycol.find_one({'user_id': user_id})
+            if user_assets is not None:
+                for asset, increase in increase_dict.items():
+                    mycol.update_one({'user_id': user_id}, {'$inc': {f'asset_details.{asset}': increase}})
+
+                for asset, decrease in decrease_dict.items():
+                    mycol.update_one({'user_id': user_id}, {'$inc': {f'asset_details.{asset}': -decrease}})
+                
+                return True
+            else:
+                print(f"找不到用戶 {user_id} 的資產記錄。")
+                return False
+
+    except Exception as e:
+        print(f"在嘗試更新用戶資產時發生錯誤： {e}")
+        return False
+
+
+def createAssets(user_id: str, asset_details: dict):
+    '''
+    創建用戶的資產。
+
+    參數:
+        user_id (str): 用戶ID。
+        asset_details (dict): 資產詳情。
+
+    返回:
+        bool: 創建成功返回 True，否則返回 False。
+    '''
+    try:
+        with pymongo.MongoClient(args.mongo) as myclient:
+            mydb = myclient["tradingview_to_exchange"]
+            mycol = mydb["assets"]
+
+            mycol.insert_one({'user_id': user_id, 'asset_details': asset_details})
+            return True
+    except Exception as e:
+        print(f"在嘗試創建用戶資產時發生錯誤： {e}")
+        return False
+
+
+def deleteAssets(user_id: str):
+    '''
+    刪除用戶的資產。
+
+    參數:
+        user_id (str): 用戶ID。
+
+    返回:
+        bool: 刪除成功返回 True，否則返回 False。
+    '''
+    try:
+        with pymongo.MongoClient(args.mongo) as myclient:
+            mydb = myclient["tradingview_to_exchange"]
+            mycol = mydb["assets"]
+
+            mycol.delete_one({'user_id': user_id})
+            return True
+    except Exception as e:
+        print(f"在嘗試刪除用戶資產時發生錯誤： {e}")
+        return False
 
 
 def createUser(username: str, email: str, password: str, userid: str):
@@ -413,6 +609,165 @@ def check_token(Token:str):
         print(e)
         return False
 
+def getAccountDetails(user_id: str):
+    '''
+    獲取用戶的API設置。
+
+    參數:
+        user_id (str): 用戶ID。
+
+    返回:
+        dict: 用戶的API設置。
+    '''
+    try:
+        with pymongo.MongoClient(args.mongo) as myclient:
+            mydb = myclient["tradingview_to_exchange"]
+            mycol = mydb["account"]
+            account_details = mycol.find_one({'user_id': user_id})
+            if account_details:
+                return account_details['account_details']
+            else:
+                print(f"找不到用戶 {user_id} 的API設置。")
+                return None
+    except Exception as e:
+        print(f"在嘗試獲取用戶API設置時發生錯誤： {e}")
+        return None
+
+
+def updateAccountDetails(user_id: str, account_details: dict):
+    '''
+    更新用戶的API設置。
+
+    參數:
+        user_id (str): 用戶ID。
+        account_details (dict): API設置。
+
+    返回:
+        bool: 更新成功返回 True，否則返回 False。
+    '''
+    try:
+        with pymongo.MongoClient(args.mongo) as myclient:
+            mydb = myclient["tradingview_to_exchange"]
+            mycol = mydb["account"]
+            mycol.update_one({'user_id': user_id}, {'$set': {'account_details': account_details}})
+            return True
+    except Exception as e:
+        print(f"在嘗試更新用戶API設置時發生錯誤： {e}")
+        return False
+
+
+def createAccountDetails(user_id: str, account_details: dict):
+    '''
+    為用戶創建API設置。
+
+    參數:
+        user_id (str): 用戶ID。
+        account_details (dict): API設置。
+
+    返回:
+        bool: 創建成功返回 True，否則返回 False。
+    '''
+    try:
+        with pymongo.MongoClient(args.mongo) as myclient:
+            mydb = myclient["tradingview_to_exchange"]
+            mycol = mydb["account"]
+            mycol.insert_one({'user_id': user_id, 'account_details': account_details})
+            return True
+    except Exception as e:
+        print(f"在嘗試創建用戶API設置時發生錯誤： {e}")
+        return False
+
+
+def deleteAccountDetails(user_id: str):
+    '''
+    刪除用戶的API設置。
+
+    參數:
+        user_id (str): 用戶ID。
+
+    返回:
+        bool: 刪除成功返回 True，否則返回 False。
+    '''
+    try:
+        with pymongo.MongoClient(args.mongo) as myclient:
+            mydb = myclient["tradingview_to_exchange"]
+            mycol = mydb["account"]
+            delete_result = mycol.delete_one({'user_id': user_id})
+            if delete_result.deleted_count > 0:
+                return True
+            else:
+                print(f"找不到用戶 {user_id} 的API設置。")
+                return False
+    except Exception as e:
+        print(f"在嘗試刪除用戶API設置時發生錯誤： {e}")
+        return False
+
+def createLog(user_id: str, log_details: dict):
+    '''
+    紀錄特定事件。
+
+    參數:
+        user_id (str): 用戶ID。
+        log_details (dict): 日誌詳情。
+
+    返回:
+        log_id (str): 成功創建的日誌ID。
+    '''
+    try:
+        with pymongo.MongoClient(args.mongo) as myclient:
+            mydb = myclient["tradingview_to_exchange"]
+            mycol = mydb["logs"]
+            log_data = {
+                "user_id": user_id,
+                "log_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "log_details": log_details
+            }
+            res = mycol.insert_one(log_data)
+            return str(res.inserted_id)
+    except Exception as e:
+        print(f"在嘗試創建日誌時發生錯誤： {e}")
+        return None
+
+def getLog(log_id: str):
+    '''
+    獲取特定日誌的詳情。
+
+    參數:
+        log_id (str): 日誌ID。
+
+    返回:
+        dict: 日誌詳情。若未找到，返回None。
+    '''
+    try:
+        with pymongo.MongoClient(args.mongo) as myclient:
+            mydb = myclient["tradingview_to_exchange"]
+            mycol = mydb["logs"]
+            res = mycol.find_one({"_id": ObjectId(log_id)})
+            return res
+    except Exception as e:
+        print(f"在嘗試獲取日誌詳情時發生錯誤： {e}")
+        return None
+
+def getUserLogs(user_id: str):
+    '''
+    獲取特定用戶的所有日誌。
+
+    參數:
+        user_id (str): 用戶ID。
+
+    返回:
+        list: 包含所有日誌的列表。若未找到，返回空列表。
+    '''
+    try:
+        with pymongo.MongoClient(args.mongo) as myclient:
+            mydb = myclient["tradingview_to_exchange"]
+            mycol = mydb["logs"]
+            res = mycol.find({"user_id": user_id})
+            return [log for log in res]
+    except Exception as e:
+        print(f"在嘗試獲取用戶日誌時發生錯誤： {e}")
+        return []
+
 
 # 创建FastAPI应用实例
 app = FastAPI()
@@ -422,22 +777,32 @@ def read_root():
     return {"Hello": "World"}
 
 @app.post("/login")
-def login(user: User):
-    data = getUser(user.user_name, args.mongo)
+async def login(user: User):
+    data = getUser(user_name=user.user_name, mongo_connection_string=args.mongo)
     if data is None:
         return {'status': 'error', 'error': 'user not found'}
     elif data['password'] != user.password:
-        return {'status': 'error', 'error': 'password error'}
+        return {'status': 'error', 'error': 'password incorrect'}
     else:
-        Token,expire_date = generate_Token(user.user_name)
+        token, expire_date = generate_Token(user_name=user.user_name)
         update_dict = {
             "user_detail": {
-                "Token": Token,
-                "expire_date": expire_date
+                "token": token,
+                "expire_date": expire_date.strftime("%Y-%m-%d %H:%M:%S")
             }
         }
         updateUser(username=user.user_name, user=update_dict)
-        return {'Token': Token, 'expire_date': expire_date, 'status': 'success'}
+        return {'token': token, 'expire_date': expire_date.strftime("%Y-%m-%d %H:%M:%S"), 'status': 'success'}
+    
+@app.post("/register")
+async def register(user: RegisterUser):
+    existing_user = getUser(user_name=user.name,mongo_connection_string=args.mongo)
+    if existing_user is not None:
+        return {'status': 'error', 'error': 'username already exists'}
+    else:
+        createUser(username=user.name, password=user.password,userid=user.id,email=user.email)
+        return {'status': 'success'}
+
     
 @app.get("/query/profile")
 async def query_profile(token: str):
@@ -532,13 +897,23 @@ async def okex5_order(order: Order):
         )
     return result
 
+@app.on_event("shutdown")
+async def shutdown_event():
+    app.state.my_client.close()
+
+def create_collection_and_index(db, collection_name, index_field):
+    collection = db[collection_name]
+    collection.create_index(index_field, unique=True)
+    return collection
+
 if __name__ == "__main__":
-    # 設定資料庫
+    # Initialize database
     my_client = pymongo.MongoClient(args.mongo)
     my_db = my_client["tradingview_to_exchange"]
-    my_col = my_db["users"]
-    my_col.create_index("user_name", unique=True)
+
+    # Users
     token,expire_date = generate_Token(args.user_name)
+    my_col = create_collection_and_index(my_db, "users", "user_name")
     my_col.insert_one({
         "user_id": args.user_name,
         "user_name": args.user_name,
@@ -551,28 +926,20 @@ if __name__ == "__main__":
     })
 
     # Orders
-    orders_col = my_db['orders']
-    orders_col.create_index('order_id', unique=True)
+    orders_col = create_collection_and_index(my_db, "orders", "order_id")
 
     # Profile
-    profile_col = my_db['profile']
-    profile_col.create_index('user_id', unique=True)
+    profile_col = create_collection_and_index(my_db, "profiles", "user_id")
 
     # Account (API Settings)
-    account_col = my_db['account']
-    account_col.create_index('user_id', unique=True)
+    account_col = create_collection_and_index(my_db, "account", "user_id")
 
     # Logs
-    logs_col = my_db['logs']
-    logs_col.create_index('log_id', unique=True)
-
-    # Trade
-    trade_col = my_db['trade']
-    trade_col.create_index('trade_id', unique=True)
+    logs_col = create_collection_and_index(my_db, "logs", "log_id")
 
     # Assets
-    assets_col = my_db['assets']
-    assets_col.create_index('user_id', unique=True)
+    assets_col = create_collection_and_index(my_db, "assets", "user_id")
 
-    # 啟動API
-    uvicorn.run(app, host="0.0.0.0",port=80)
+    # Start API
+    uvicorn.run(app, host="0.0.0.0", port=443)
+

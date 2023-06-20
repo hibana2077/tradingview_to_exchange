@@ -7,12 +7,13 @@
 3. Profile
 4. Account
 5. Logs
-6. Trade
-7. Assets
+6. Assets
 
 ## Data Sheet Columns and API Functions
 
 ### Orders
+
+- [X] Done
 
 #### Columns
 
@@ -30,6 +31,8 @@
 - `getUserOrders`: Get all orders of a specific user.
 
 ### Users
+
+- [X] Done
 
 #### Columns
 
@@ -50,6 +53,8 @@
 
 ### Profile
 
+- [X] Done
+
 #### Columns
 
 - User ID
@@ -59,8 +64,12 @@
 
 - `getProfile`: Get the profile of a specific user.
 - `updateProfile`: Update the profile of a user.
+- `createProfile`: Create a profile for a user.
+- `deleteProfile`: Delete the profile of a user.
 
 ### Account (API Settings)
+
+- [X] Done
 
 #### Columns
 
@@ -71,8 +80,12 @@
 
 - `getAccountDetails`: Get the API settings of a user.
 - `updateAccountDetails`: Update the API settings of a user.
+- `createAccountDetails`: Create the API settings of a user.
+- `deleteAccountDetails`: Delete the API settings of a user.
 
 ### Logs
+
+- [X] Done
 
 #### Columns
 
@@ -89,6 +102,8 @@
 
 ### Assets
 
+- [X] Done
+
 #### Columns
 
 - User ID
@@ -98,4 +113,6 @@
 
 - `getAssets`: Get the asset details of a user.
 - `updateAssets`: Update the assets of a user.
+- `createAssets`: Create the assets of a user.
+- `deleteAssets`: Delete the assets of a user.
 
