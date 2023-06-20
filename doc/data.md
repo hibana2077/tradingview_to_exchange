@@ -38,6 +38,8 @@
 - User Email
 - User Password
 - User Details
+    - JWT token
+    - Token Expiry Time
 
 #### API Functions
 

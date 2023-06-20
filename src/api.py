@@ -13,6 +13,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--mongo', type=str, default='mongodb://localhost:27017/', help='MongoDB connection string')
 parser.add_argument('--user_name', type=str, default='admin', help='APP user name')
 parser.add_argument('--password', type=str, default='admin', help='APP password')
+parser.add_argument('--user_email', type=str,default="", help='APP user email')
 parser.add_argument('--broker', type=str, default='080c0d187dcaSUDE', help='Broker ID')
 
 args = parser.parse_args()
@@ -395,10 +396,14 @@ if __name__ == "__main__":
     my_col.create_index("user_name", unique=True)
     token,expire_date = generate_Token(args.user_name)
     my_col.insert_one({
+        "user_id": args.user_name,
         "user_name": args.user_name,
-        "password": args.password,
-        "Token": token,
-        "expire_date": expire_date,
+        "user_password": args.password,
+        "user_email": args.email,
+        "user_detail": {
+            "token": token,
+            "expire_date": expire_date
+        }
     })
 
     # Orders
