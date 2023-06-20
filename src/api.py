@@ -111,7 +111,7 @@ def update_profile(user_name:str,update_data:dict):
         print(e)
 
 # 用户记录
-def user_record(user):
+def updateUser(user):
     '''
     将用户信息记录到数据库。
 
@@ -304,7 +304,7 @@ def login(user: User):
         return {'status': 'error', 'error': 'password error'}
     else:
         Token,expire_date = generate_Token(user.user_name)
-        user_record({
+        updateUser({
             'user_name': user.user_name,
             'Token': Token,
             'expire_date': expire_date
