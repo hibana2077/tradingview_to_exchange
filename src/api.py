@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi import HTTPException, status
 from pydantic import BaseModel
 from bson.objectid import ObjectId
 from typing import Optional
@@ -56,16 +57,12 @@ class RegisterUser(BaseModel):
     email: str
     password: str
 
-class binance_api_setting(BaseModel):
+class Api_settings(BaseModel):
     token: str
     api_key: str
     secret_key: str
-
-class okex5_api_setting(BaseModel):
-    token: str
-    api_key: str
-    secret_key: str
-    passphrase: str
+    phrase: Optional[str] = None
+    exchange: str
 
 #constants
 ALLOWED_FIELDS = ['user_name', 'user_email', 'user_password', 'user_detail']
@@ -554,7 +551,7 @@ def generate_Token(user_name: str)->dict:
         print(e)
         return {'Token': None, 'Expire_Date': None}
 
-def token_2_user_name(Token:str):
+def token_2_user_name(Token:str)->str:
     '''
     根据令牌获取用户名。
 
@@ -575,11 +572,11 @@ def token_2_user_name(Token:str):
             return data['user_name']
         else:
             print(f"未找到 {Token} 的紀錄。")
-            return None
+            return ""
     except Exception as e:
         print("在嘗試獲取用户資料時發生錯誤：")
         print(e)
-        return None
+        return ""
 
 def check_token(Token:str):
     '''
@@ -803,103 +800,22 @@ async def register(user: RegisterUser):
         createUser(username=user.name, password=user.password,userid=user.id,email=user.email)
         return {'status': 'success'}
 
-    
-@app.get("/query/profile")
-async def query_profile(token: str):
-    if check_token(token):
-        myclient = pymongo.MongoClient(args.mongo)
-        mydb = myclient["tradingview_to_exchange"]
-        mycol = mydb["users"]
-        user_name = mycol.find_one({'Token': token})['user_name']
-        mycol = mydb["profiles"]
-        profile_data = mycol.find_one({'user_name': user_name})
-        myclient.close()
-        return profile_data
-    else:return {'status': 'error', 'error': 'token error'}
+@app.post("/api/setting")
+async def api_setting(setting: Api_settings):
+    if not check_token(Token=setting.token):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, 
+                            detail='token incorrect or expired')
 
-@app.post("/exchange/test")#this using for demo
-async def test_order(order: Order):
-    order_id = recordOrder(order=order, status='success')
-    return {'status': 'success', 'order_id': order_id}
-
-@app.post("/exchange/binance")#it should be place spot order
-async def binance_order(order: Order):
-    db_client = pymongo.MongoClient(args.mongo)
-    db = db_client["tradingview_to_exchange"]
-    col = db["api_setting"]
-    data = col.find_one({'user_name': order.username , 'exchange': order.exchange})
-    api_key,api_sec = data['api_key'],data['secret_key']
-    db_client.close()
-    binance_ex = binance({
-        'apiKey': api_key,
-        'secret': api_sec,
-        'options': {
-            'defaultType': order.class_SF,
-        },
-        'timeout': 30000,
-    })
-    if order.type == 'market':
-        if order.side == 'buy':
-            result = binance_ex.create_market_buy_order(order.symbol,order.quantity)
-        elif order.side == 'sell':
-            result = binance_ex.create_market_sell_order(order.symbol,order.quantity)
-    elif order.type == 'limit':
-        if order.side == 'buy':
-            result = binance_ex.create_limit_buy_order(order.symbol,order.quantity,order.price)
-        elif order.side == 'sell':
-            result = binance_ex.create_limit_sell_order(order.symbol,order.quantity,order.price)
-    if result['info']['status'] == 'FILLED':#need to change status
-        record_failed_order(order)
-        return {'status': 'success', 'order_id': result['id']}
-    else:
-        record_order(order)
-        return {'status': 'error', 'error': result['info']['status']}
-    
-@app.post("/exchange/okex5")
-async def okex5_order(order: Order):
-    db_client = pymongo.MongoClient(args.mongo)
-    db = db_client["tradingview_to_exchange"]
-    col = db["api_setting"]
-    data = col.find_one({'user_name': order.username , 'exchange': order.exchange})
-    api_key,api_sec,passphrase = data['api_key'],data['secret_key'],data['passphrase']
-    db_client.close()
-    okex5_ex = okex5({
-        'apiKey': api_key,
-        'secret': api_sec,
-        'password': passphrase,
-        'timeout': 30000,
-        'options': {
-            'defaultType': order.class_SF,
-        },
-    })
-    side = 'buy' if order.side == 'buy' else 'sell'
-    if order.type == 'market':
-        result = okex5_ex.create_order(
-            order.symbol,
-            'market',
-            side,
-            order.quantity,
-            None,
-            params={
-                "tag": args.broker
-            }
-        )
-    elif order.type == 'limit':
-        result = okex5_ex.create_order(
-            order.symbol,
-            'limit',
-            side,
-            order.quantity,
-            order.price,
-            params={
-                "tag": args.broker#broker code
-            }
-        )
-    return result
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    app.state.my_client.close()
+    user_id = token_2_user_name(Token=setting.token)
+    update_data = {
+        setting.exchange: {
+            "api_key": setting.api_key,
+            "secret_key": setting.secret_key,
+            "phrase": setting.phrase
+        }
+    }
+    updateUser(username=user_id, user=update_data)
+    return {'status': 'success'}
 
 def create_collection_and_index(db, collection_name, index_field):
     collection = db[collection_name]
@@ -939,6 +855,9 @@ if __name__ == "__main__":
 
     # Assets
     assets_col = create_collection_and_index(my_db, "assets", "user_id")
+
+    #exit database
+    my_client.close()
 
     # Start API
     uvicorn.run(app, host="0.0.0.0", port=443)
