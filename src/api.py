@@ -119,14 +119,29 @@ def user_record(user):
         user (dict): 用户信息字典，预期包含'user_name'键。
     '''
     try:
+        
         myclient = pymongo.MongoClient(args.mongo)
         mydb = myclient["tradingview_to_exchange"]
         mycol = mydb["users"]
+        temp = mycol.find_one({'user_name': user['user_name']})
+        update_data = {
+            "user_id": temp['user_id'],
+            "user_name": user['user_name'],
+            "user_password": temp['user_password'],
+            "user_email": temp['user_email'],
+            "user_detail": {
+                "token": user['user_detail']['token'],
+                "expire_date": user['user_detail']['expire_date'],
+            }
+        }
         mycol.update_one({'user_name': user['user_name']}, {'$set': user}, upsert=True)
         print(f"用户 {user['user_name']} 的记录已成功更新。")
+        myclient.close()
+        return True
     except Exception as e:
         print("在尝试更新用户记录时发生错误：")
         print(e)
+        return False
 
 # 获取用户记录
 def get_user_record(user_name:str, mongo_connection_string:str):
@@ -142,12 +157,13 @@ def get_user_record(user_name:str, mongo_connection_string:str):
         mydb = myclient["tradingview_to_exchange"]
         mycol = mydb["users"]
         data = mycol.find_one({'user_name': user_name})
+        return_data = data
         myclient.close()
         if data is not None:
             print(f"成功获取到 {user_name} 的记录。")
         else:
             print(f"未找到 {user_name} 的记录。")
-        return data
+        return return_data
     except Exception as e:
         print("在尝试获取用户记录时发生错误：")
         print(e)
@@ -212,7 +228,7 @@ def check_token(Token:str):
         result = mycol.find_one({'Token': Token})
         myclient.close()
         if result is not None:
-            if datetime.strptime(result['expire_date'], "%Y-%m-%d %H:%M:%S") > datetime.now():
+            if datetime.strptime(result['user_detail']['expire_date'], "%Y-%m-%d %H:%M:%S") > datetime.now():
                 return True
             else:
                 return False
@@ -262,12 +278,12 @@ class User(BaseModel):
     password: str
 
 class binance_api_setting(BaseModel):
-    user_name: str
+    token: str
     api_key: str
     secret_key: str
 
 class okex5_api_setting(BaseModel):
-    user_name: str
+    token: str
     api_key: str
     secret_key: str
     passphrase: str
@@ -281,20 +297,19 @@ def read_root():
 
 @app.post("/login")
 def login(user: User):
-    if user.user_name == args.user_name and user.password == args.password:
-        Token,expire_date = generate_Token(user.user_name)
-        user_record({'user_name': user.user_name, 'Token': Token, 'expire_date': expire_date})
-        return {'Token': Token, 'expire_date': expire_date, 'status': 'success'}
+    data = get_user_record(user.user_name, args.mongo)
+    if data is None:
+        return {'status': 'error', 'error': 'user not found'}
+    elif data['password'] != user.password:
+        return {'status': 'error', 'error': 'password error'}
     else:
-        data = get_user_record(user.user_name, args.mongo)
-        if data is None:
-            return {'status': 'error', 'error': 'user not found'}
-        elif data['password'] != user.password:
-            return {'status': 'error', 'error': 'password error'}
-        else:
-            Token,expire_date = generate_Token(user.user_name)
-            user_record({'user_name': user.user_name, 'Token': Token, 'expire_date': expire_date})
-            return {'Token': Token, 'expire_date': expire_date, 'status': 'success'}
+        Token,expire_date = generate_Token(user.user_name)
+        user_record({
+            'user_name': user.user_name,
+            'Token': Token,
+            'expire_date': expire_date
+        })
+        return {'Token': Token, 'expire_date': expire_date, 'status': 'success'}
     
 @app.get("/query/profile")
 async def query_profile(token: str):
