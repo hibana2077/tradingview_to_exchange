@@ -295,11 +295,11 @@ def token_2_user_name(Token:str):
         user_name (str): 用户名。
     '''
     try:
-        myclient = pymongo.MongoClient(args.mongo)
-        mydb = myclient["tradingview_to_exchange"]
-        mycol = mydb["users"]
-        data = mycol.find_one({'Token': Token})
-        myclient.close()
+        with pymongo.MongoClient(args.mongo) as myclient:
+            mydb = myclient["tradingview_to_exchange"]
+            mycol = mydb["users"]
+            data = mycol.find_one({'user_detail.token': Token})
+
         if data is not None:
             print(f"成功取得 {Token} 的紀錄。")
             return data['user_name']
@@ -309,6 +309,7 @@ def token_2_user_name(Token:str):
     except Exception as e:
         print("在嘗試獲取用户資料時發生錯誤：")
         print(e)
+
 
 def check_token(Token:str):
     '''
