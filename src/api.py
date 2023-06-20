@@ -8,6 +8,9 @@ import pymongo
 import uvicorn
 import argparse
 
+#constants
+ALLOWED_FIELDS = ['user_name', 'user_email', 'user_password', 'user_detail']
+
 # Parse arguments
 parser = argparse.ArgumentParser()
 parser.add_argument('--mongo', type=str, default='mongodb://localhost:27017/', help='MongoDB connection string')
@@ -110,36 +113,31 @@ def update_profile(user_name:str,update_data:dict):
         print("在尝试更新用户记录时发生错误：")
         print(e)
 
-# 用户记录
-def updateUser(user):
+def updateUser(username:str, user:dict):
     '''
-    将用户信息记录到数据库。
+    將用戶信息記錄到數據庫。
 
-    参数:
-        user (dict): 用户信息字典，预期包含'user_name'键。
+    參數:
+        username (str): 用戶名
+        user (dict): 用戶信息字典，預期包含允許的字段鍵。
     '''
     try:
-        
-        myclient = pymongo.MongoClient(args.mongo)
-        mydb = myclient["tradingview_to_exchange"]
-        mycol = mydb["users"]
-        temp = mycol.find_one({'user_name': user['user_name']})
-        update_data = {
-            "user_id": temp['user_id'],
-            "user_name": user['user_name'],
-            "user_password": temp['user_password'],
-            "user_email": temp['user_email'],
-            "user_detail": {
-                "token": user['user_detail']['token'],
-                "expire_date": user['user_detail']['expire_date'],
-            }
-        }
-        mycol.update_one({'user_name': user['user_name']}, {'$set': update_data}, upsert=True)
-        print(f"用户 {user['user_name']} 的记录已成功更新。")
-        myclient.close()
+        with pymongo.MongoClient(args.mongo) as myclient:
+            mydb = myclient["tradingview_to_exchange"]
+            mycol = mydb["users"]
+            
+            temp = mycol.find_one({'user_name': username})
+            if not temp:
+                print(f"找不到用戶名為 {username} 的用戶。")
+                return False
+            
+            update_data = {field: user.get(field) for field in ALLOWED_FIELDS if field in user}
+            mycol.update_one({'user_name': username}, {'$set': update_data}, upsert=True)
+            
+        print(f"用戶 {username} 的記錄已成功更新。")
         return True
     except Exception as e:
-        print("在尝试更新用户记录时发生错误：")
+        print("在嘗試更新用戶記錄時發生錯誤：")
         print(e)
         return False
 
