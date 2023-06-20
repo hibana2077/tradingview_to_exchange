@@ -21,57 +21,77 @@ parser.add_argument('--broker', type=str, default='080c0d187dcaSUDE', help='Brok
 
 args = parser.parse_args()
 
-# 记录失败的订单
-def record_failed_order(order):
-    myclient = pymongo.MongoClient(args.mongo)
-    mydb = myclient["tradingview_to_exchange"]
-    mycol = mydb["orders"]
-    rec_data = {
-        "owner": order["username"],#primary key
-        "id": md5((order["username"] + order["time"]).encode()).hexdigest(),
-        "time": order["time"], 
-        "status": "failed",
-        "detail": {
-            "symbol": order["symbol"],
-            "side": order["side"],
-            "type": order["type"],
-            "quantity": order["quantity"],
-            "price": order["price"],
-            "leverage": order["leverage"],
-            "class": order["class_SF"],
-            "note": order["note"]
-        }
-    }
-    res = mycol.insert_one(rec_data)
-    print(f"订单 {res.inserted_id} 已记录。")
-    myclient.close()
-    return res.inserted_id
+def recordOrder(order: dict, status: str):
+    '''
+    紀錄訂單。
 
-# 记录订单
-def record_order(order):
-    myclient = pymongo.MongoClient(args.mongo)
-    mydb = myclient["tradingview_to_exchange"]
-    mycol = mydb["orders"]
-    rec_data = {
-        "owner": order["username"],#primary key
-        "id": md5((order["username"] + order["time"]).encode()).hexdigest(),
-        "time": order["time"], 
-        "status": "success",
-        "detail": {
-            "symbol": order["symbol"],
-            "side": order["side"],
-            "type": order["type"],
-            "quantity": order["quantity"],
-            "price": order["price"],
-            "leverage": order["leverage"],
-            "class": order["class_SF"],
-            "note": order["note"]
+    參數:
+        order (dict): 訂單詳情。
+        status (str): 訂單的狀態，可以是 'success' 或 'failed'。
+    '''
+    with pymongo.MongoClient(args.mongo) as myclient:
+        mydb = myclient["tradingview_to_exchange"]
+        mycol = mydb["orders"]
+        rec_data = {
+            "user_id": order["user_id"], 
+            "order_id": md5((order["user_id"] + order["time"]).encode()).hexdigest(), #primary key
+            "order_time": order["time"], 
+            "order_status": status,
+            "order_detail": order["detail"]
         }
-    }
-    res = mycol.insert_one(rec_data)
-    print(f"订单 {res.inserted_id} 已记录。")
-    myclient.close()
-    return res.inserted_id
+        res = mycol.insert_one(rec_data)
+        print(f"訂單 {res.inserted_id} 已記錄。")
+        return res.inserted_id
+
+
+def getOrder(order_id: str):
+    '''
+    獲取特定訂單的詳情。
+
+    參數:
+        order_id (str): 訂單的ID。
+    '''
+    try:
+        with pymongo.MongoClient(args.mongo) as myclient:
+            mydb = myclient["tradingview_to_exchange"]
+            mycol = mydb["orders"]
+            data = mycol.find_one({'order_id': order_id})
+
+        if data is not None:
+            print(f"成功獲取到 {order_id} 的訂單記錄。")
+        else:
+            print(f"未找到 {order_id} 的訂單記錄。")
+            
+        return data
+    except Exception as e:
+        print("在嘗試獲取訂單記錄時發生錯誤：")
+        print(e)
+        return None
+
+
+def getUserOrders(user_id: str):
+    '''
+    獲取特定用戶的所有訂單。
+
+    參數:
+        user_id (str): 用戶的ID。
+    '''
+    try:
+        with pymongo.MongoClient(args.mongo) as myclient:
+            mydb = myclient["tradingview_to_exchange"]
+            mycol = mydb["orders"]
+            data = mycol.find({'user_id': user_id})
+
+        if data is not None:
+            print(f"成功獲取到 {user_id} 的所有訂單記錄。")
+        else:
+            print(f"未找到 {user_id} 的任何訂單記錄。")
+            
+        return list(data)
+    except Exception as e:
+        print("在嘗試獲取訂單記錄時發生錯誤：")
+        print(e)
+        return None
 
 #更新profile
 def update_profile(user_name:str,update_data:dict):
@@ -309,15 +329,15 @@ def token_2_user_name(Token:str):
     except Exception as e:
         print("在嘗試獲取用户資料時發生錯誤：")
         print(e)
-
+        return None
 
 def check_token(Token:str):
     '''
-    检查令牌是否有效。
-    
-    参数:
+    檢查令牌是否有效。
+
+    參數:
         Token (str): 令牌。
-        
+
     返回:
         bool: 令牌是否有效。
     '''
@@ -325,7 +345,7 @@ def check_token(Token:str):
         myclient = pymongo.MongoClient(args.mongo)
         mydb = myclient["tradingview_to_exchange"]
         mycol = mydb["users"]
-        result = mycol.find_one({'Token': Token})
+        result = mycol.find_one({'user_detail.token': Token})
         myclient.close()
         if result is not None:
             if datetime.strptime(result['user_detail']['expire_date'], "%Y-%m-%d %H:%M:%S") > datetime.now():
@@ -337,6 +357,7 @@ def check_token(Token:str):
     except Exception as e:
         print("在嘗試檢查令牌時發生錯誤：")
         print(e)
+        return False
 
 # 定义数据模型
 class Order(BaseModel):
@@ -428,7 +449,9 @@ async def query_profile(token: str):
 
 @app.post("/exchange/test")#this using for demo
 async def test_order(order: Order):
-    record_order(order.dict())
+    data = {
+
+    recordOrder(order,'success')
 
 @app.post("/exchange/binance")#it should be place spot order
 async def binance_order(order: Order):
@@ -456,7 +479,7 @@ async def binance_order(order: Order):
             result = binance_ex.create_limit_buy_order(order.symbol,order.quantity,order.price)
         elif order.side == 'sell':
             result = binance_ex.create_limit_sell_order(order.symbol,order.quantity,order.price)
-    if result['info']['status'] == 'FILLED':#need to change error status
+    if result['info']['status'] == 'FILLED':#need to change status
         record_failed_order(order)
         return {'status': 'success', 'order_id': result['id']}
     else:
