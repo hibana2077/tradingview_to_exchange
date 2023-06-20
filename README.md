@@ -3,8 +3,8 @@
 ![GitHub](https://img.shields.io/github/license/hibana2077/tradingview_to_exchange)
 ![GitHub last commit](https://img.shields.io/github/last-commit/hibana2077/tradingview_to_exchange)
 ![GitHub issues](https://img.shields.io/github/issues/hibana2077/tradingview_to_exchange)
-![GitHub stars](https://img.shields.io/github/stars/hibana2077/GPT_news_generator?style=social)
-![GitHub forks](https://img.shields.io/github/forks/hibana2077/GPT_news_generator?style=social)
+![GitHub stars](https://img.shields.io/github/stars/hibana2077/tradingview_to_exchange?style=social)
+![GitHub forks](https://img.shields.io/github/forks/hibana2077/tradingview_to_exchange?style=social)
 
 English | [中文](./doc/README_TW.md)
 
