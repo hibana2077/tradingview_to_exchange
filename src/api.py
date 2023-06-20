@@ -214,6 +214,33 @@ def updateUser(username:str, user:dict):
         print("在嘗試更新用戶記錄時發生錯誤：")
         print(e)
         return False
+    
+def deleteUser(username: str, mongo_connection_string: str):
+    '''
+    從數據庫中刪除用戶記錄。
+
+    參數:
+        username (str): 用戶名。
+        mongo_connection_string (str): MongoDB連接字符串。
+    '''
+    try:
+        with pymongo.MongoClient(mongo_connection_string) as myclient:
+            mydb = myclient["tradingview_to_exchange"]
+            mycol = mydb["users"]
+
+            # Check if user exists
+            if mycol.count_documents({'user_name': username}) == 0:
+                print(f"未找到 {username} 的記錄，因此無法刪除。")
+                return False
+
+            mycol.delete_one({'user_name': username})
+
+        print(f"用戶 {username} 的記錄已成功刪除。")
+        return True
+    except Exception as e:
+        print("在嘗試刪除用戶記錄時發生錯誤：")
+        print(e)
+        return False
 
 # 生成令牌
 def generate_Token(user_name: str)->dict:
