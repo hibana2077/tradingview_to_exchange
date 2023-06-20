@@ -115,3 +115,8 @@ async def order(order: Order):
             cacu_profit({"symbol": order.symbol, "side": order.side, "quantity": order.quantity, "price": order.price})
         else:
             return JSONResponse(status_code=400, content={"message": "DCA type incorrect"})
+        
+        return {"message": "Order received"}
+    
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=80)
