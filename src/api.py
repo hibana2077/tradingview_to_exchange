@@ -209,7 +209,7 @@ def getUser(user_name:str, mongo_connection_string:str):
         print(e)
 
 # 生成令牌
-def generate_Token(user_name: str):
+def generate_Token(user_name: str)->dict:
     '''
     根據用戶名和當前日期時間生成MD5令牌。
 
