@@ -29,6 +29,14 @@ class Order(BaseModel):
     quantity: float
     price: float
     act: str    # newpos or add or exit
+"""
+{
+    "password": "PASSWORD",
+    "symbol": "BTCUSDT",
+    "side": "{{strategy.order.action}}",
+    "quantity": "{{strategy.order.contracts}}",
+}
+"""
 
 def rec_order(order: Order):
     with open(DATA_LOC, 'r') as f:
