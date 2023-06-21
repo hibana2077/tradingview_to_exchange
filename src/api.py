@@ -231,12 +231,12 @@ def getProfile(user_name:str):
         print(e)
         return None
 
-def createProfile(user_name:str, profile_details:dict):
+def createProfile(user_id:str, profile_details:dict):
     '''
     為用戶創建一個個人資料。
 
     參數:
-        user_name (str): 用戶名。
+        user_id (str): 用戶ID。
         profile_details (dict): 用戶資料詳細信息。
 
     返回:
@@ -247,10 +247,10 @@ def createProfile(user_name:str, profile_details:dict):
             mydb = myclient["tradingview_to_exchange"]
             mycol = mydb["profiles"]
             
-            profile_details['user_name'] = user_name
+            profile_details['user_id'] = user_id
             mycol.insert_one(profile_details)
 
-            print(f"用戶 {user_name} 的個人資料已成功創建。")
+            print(f"用戶 {user_id} 的個人資料已成功創建。")
             return True
 
     except Exception as e:
@@ -881,7 +881,7 @@ async def login(user: User):
             }
         }
         updateUser(username=user.user_name, user=update_dict)
-        return {'token': token, 'expire_date': expire_date, 'status': 'success'}
+        return {'token': token, 'expire_date': expire_date, 'status': 'success', 'user_id': data['user_id']}
     
 @app.post("/register")#Verify
 async def register(user: RegisterUser):
@@ -889,7 +889,8 @@ async def register(user: RegisterUser):
     if existing_user is not None:
         return {'status': 'error', 'error': 'username already exists'}
     else:
-        if createUser(username=user.name, password=user.password,userid=user.id,email=user.email):return {'status': 'success'}
+        if createUser(username=user.name, password=user.password,userid=user.id,email=user.email):
+            return {'status': 'success'}
         else:return {'status': 'error', 'error': 'register failed'}
 
 @app.post("/api/setting/api_setting")
