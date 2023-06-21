@@ -21,11 +21,11 @@
 - Order ID
 - User ID
 - Order Time
-- Order Status
+- Order Status (Failed, Success)
 - Order Details
-    - Order Type
-    - Order Side
-    - Order Price
+    - Order Type (Market, Limit, etc.)
+    - Order Side (Buy, Sell)
+    - Order Price 
     - Order Quantity
     - Order Leverage
     - Order Class (Spot,Futures,Swap,etc.)
