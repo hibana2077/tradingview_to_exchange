@@ -121,6 +121,9 @@ async def order(order: Order):
             """
             rec_order(order)
             cacu_profit({"symbol": order.symbol, "side": order.side, "quantity": order.quantity, "price": order.price})
+            rec_trade({"symbol": order.symbol, "side": order.side, "quantity": order.quantity, "price": order.price})
+            #clear_open(order.symbol)
+            clear_open(order.symbol)
         else:
             return JSONResponse(status_code=400, content={"message": "DCA type incorrect"})
         
