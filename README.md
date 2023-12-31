@@ -11,7 +11,7 @@ English | [中文](./doc/README_TW.md)
 ## Introduction
 
 ![python](https://img.shields.io/badge/python-3.11-blue?style=plastic-square&logo=python)
-![streamlit](https://img.shields.io/badge/streamlit-1.20.0-FF4B4B?style=plastic-square&logo=streamlit)
+![svelte](https://img.shields.io/badge/svelte-3.38.3-FF3E00?style=plastic-square&logo=svelte)
 ![fastapi](https://img.shields.io/badge/fastapi-0.85.1-009688?style=plastic-square&logo=fastapi)
 ![mongodb](https://img.shields.io/badge/mongodb-4.4.6-47A248?style=plastic-square&logo=mongodb)
 ![openai](https://img.shields.io/badge/openai-0.27.0-412991?style=plastic-square&logo=openai)
