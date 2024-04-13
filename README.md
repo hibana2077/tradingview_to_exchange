@@ -1,3 +1,11 @@
+<!--
+ * @Author: hibana2077 hibana2077@gmail.com
+ * @Date: 2023-06-10 18:31:13
+ * @LastEditors: hibana2077 hibana2077@gmail.com
+ * @LastEditTime: 2024-04-13 10:36:13
+ * @FilePath: \tradingview_to_exchange\README.md
+ * @Description: 
+-->
 # tradingview to exchange(TV2EX) BOT
 
 ![GitHub](https://img.shields.io/github/license/hibana2077/tradingview_to_exchange)
@@ -10,12 +18,12 @@ English | [中文](./doc/README_TW.md)
 
 ## Introduction
 
-![python](https://img.shields.io/badge/python-3.11-blue?style=plastic-square&logo=python)
-![svelte](https://img.shields.io/badge/svelte-3.38.3-FF3E00?style=plastic-square&logo=svelte)
-![fastapi](https://img.shields.io/badge/fastapi-0.85.1-009688?style=plastic-square&logo=fastapi)
-![mongodb](https://img.shields.io/badge/mongodb-4.4.6-47A248?style=plastic-square&logo=mongodb)
-![openai](https://img.shields.io/badge/openai-0.27.0-412991?style=plastic-square&logo=openai)
-![docker](https://img.shields.io/badge/docker-20.10.11-2496ED?style=plastic-square&logo=docker)
+![Python](https://img.shields.io/badge/python-3.11-blue?style=plastic-square&logo=python)
+![Astro](https://img.shields.io/badge/Astro-latest-FFD700?style=plastic-square&logo=astro)
+![Fastapi](https://img.shields.io/badge/fastapi-latest-009688?style=plastic-square&logo=fastapi)
+![Mongodb](https://img.shields.io/badge/mongodb-latest-47A248?style=plastic-square&logo=mongodb)
+![Openai](https://img.shields.io/badge/openai-latest-412991?style=plastic-square&logo=openai)
+![Docker](https://img.shields.io/badge/docker-latest-2496ED?style=plastic-square&logo=docker)
 [![Binance](https://img.shields.io/badge/binance--%2d10%25-F0B90B?style=plastic-square&logo=binance)](https://www.binance.com/en/activity/referral-entry/MYB23J?fromActivityPage=true&ref=LIMIT_TJMU1KAZ)
 [![Okex](https://img.shields.io/badge/okex--%2d10%25-000000?style=plastic-square&logo=okex)](https://www.okx.com/join/18323483)
 
