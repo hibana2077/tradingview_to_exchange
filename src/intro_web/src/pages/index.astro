@@ -4,6 +4,7 @@ import Feature1 from '../components/Feature1.astro';
 import Hero from '../components/Hero.tsx';
 import FAQS from '../components/FAQ';
 import Mertic from '../components/Mertic.astro';
+import Contact from '../components/Contact.jsx';
 ---
 
 <Layout title="Welcome to Astro.">
@@ -11,4 +12,5 @@ import Mertic from '../components/Mertic.astro';
     <Feature1 />
     <Mertic />
     <FAQS client:load />
+    <Contact client:load />
 </Layout>
