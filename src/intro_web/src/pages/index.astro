@@ -2,9 +2,13 @@
 import Layout from '../layouts/Layout.astro';
 import Feature1 from '../components/Feature1.astro';
 import Hero from '../components/Hero.tsx';
+import FAQS from '../components/FAQ';
+import Mertic from '../components/Mertic.astro';
 ---
 
 <Layout title="Welcome to Astro.">
     <Hero client:load />
     <Feature1 />
+    <Mertic />
+    <FAQS client:load />
 </Layout>
